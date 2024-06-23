@@ -1,8 +1,12 @@
-[gd_scene load_steps=73 format=3 uid="uid://wgehhi1whphq"]
+[gd_scene load_steps=75 format=3 uid="uid://wgehhi1whphq"]
 
 [ext_resource type="Script" path="res://scripts/slime/slime.gd" id="1_ixyj7"]
 [ext_resource type="Texture2D" uid="uid://ba7pojxpscxss" path="res://art/1. mystic_woods/sprites/characters/slime.png" id="2_ph000"]
 [ext_resource type="Script" path="res://scripts/fsm/FiniteStateMachine.gd" id="3_tafpa"]
+[ext_resource type="Script" path="res://scripts/slime/slime_wander_state.gd" id="5_5jduj"]
+[ext_resource type="Script" path="res://scripts/slime/slime_hostile_state.gd" id="5_vxhmm"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_012l5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a3l1o"]
 atlas = ExtResource("2_ph000")
@@ -288,9 +292,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gkwju")
 }],
-"loop": true,
+"loop": false,
 "name": &"back_attack",
-"speed": 5.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -388,9 +392,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_t6koa")
 }],
-"loop": true,
+"loop": false,
 "name": &"front_attack",
-"speed": 5.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -468,9 +472,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0yqf2")
 }],
-"loop": true,
+"loop": false,
 "name": &"side_attack",
-"speed": 5.0
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -531,10 +535,7 @@ animations = [{
 radius = 8.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_38tqc"]
-radius = 78.0064
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_iomfa"]
-radius = 15.0333
+radius = 88.0057
 
 [node name="Slime" type="CharacterBody2D" groups=["Enemies"]]
 collision_layer = 2
@@ -542,9 +543,10 @@ collision_mask = 27
 script = ExtResource("1_ixyj7")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_012l5")
 position = Vector2(0, -6)
 sprite_frames = SubResource("SpriteFrames_76nv5")
-animation = &"front_hurt"
+animation = &"side_walk"
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -559,30 +561,19 @@ collision_layer = 2
 shape = SubResource("CircleShape2D_38tqc")
 metadata/_edit_lock_ = true
 
-[node name="Slime_Hitbox" type="Area2D" parent="."]
-collision_layer = 2
-collision_mask = 11
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Slime_Hitbox"]
-position = Vector2(0, -4)
-shape = SubResource("CircleShape2D_iomfa")
-
-[node name="Timers" type="Node" parent="."]
-
-[node name="TakeDamageCooldown" type="Timer" parent="Timers"]
-wait_time = 0.5
-one_shot = true
-
-[node name="WanderTimer" type="Timer" parent="Timers"]
-wait_time = 2.0
-autostart = true
-
-[node name="FiniteStateMachine" type="Node" parent="."]
+[node name="FiniteStateMachine" type="Node" parent="." node_paths=PackedStringArray("current_state")]
 script = ExtResource("3_tafpa")
+current_state = NodePath("SlimeWanderState")
 
-[connection signal="body_entered" from="DetectionRange" to="." method="_on_detection_range_body_entered"]
-[connection signal="body_exited" from="DetectionRange" to="." method="_on_detection_range_body_exited"]
-[connection signal="body_entered" from="Slime_Hitbox" to="." method="_on_slime_hitbox_body_entered"]
-[connection signal="body_exited" from="Slime_Hitbox" to="." method="_on_slime_hitbox_body_exited"]
-[connection signal="timeout" from="Timers/TakeDamageCooldown" to="." method="_on_take_damage_cooldown_timeout"]
-[connection signal="timeout" from="Timers/WanderTimer" to="." method="_on_wander_timer_timeout"]
+[node name="SlimeHostileState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("actor", "anim_player", "detection_range")]
+script = ExtResource("5_vxhmm")
+actor = NodePath("../..")
+anim_player = NodePath("../../AnimatedSprite2D")
+detection_range = NodePath("../../DetectionRange")
+
+[node name="SlimeWanderState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("actor", "detection_range")]
+script = ExtResource("5_5jduj")
+actor = NodePath("../..")
+detection_range = NodePath("../../DetectionRange")
+
+[node name="Timers" type="Node2D" parent="."]

@@ -1,7 +1,19 @@
-[gd_scene load_steps=54 format=3 uid="uid://cwsbvhhhmfgka"]
+[gd_scene load_steps=64 format=3 uid="uid://cwsbvhhhmfgka"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_7pw3r"]
 [ext_resource type="Texture2D" uid="uid://c3rdyodlrpwho" path="res://art/1. mystic_woods/sprites/characters/player.png" id="2_fwo3g"]
+[ext_resource type="Shader" uid="uid://dm1mrd5ixywnx" path="res://shaders/hit_flash.tres" id="2_v208g"]
+[ext_resource type="Script" path="res://scripts/fsm/FiniteStateMachine.gd" id="3_r3vwb"]
+[ext_resource type="Script" path="res://scripts/player/idle_state.gd" id="4_q03u7"]
+[ext_resource type="Script" path="res://scripts/player/walking_state.gd" id="5_fu3va"]
+[ext_resource type="Script" path="res://scripts/player/melee_attack_state.gd" id="6_45hnu"]
+[ext_resource type="Script" path="res://scripts/player/hurt_state.gd" id="7_yco6u"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3j3wf"]
+resource_local_to_scene = true
+shader = ExtResource("2_v208g")
+shader_parameter/enabled = false
+shader_parameter/tint = Color(1, 1, 1, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mtyi5"]
 atlas = ExtResource("2_fwo3g")
@@ -18,6 +30,10 @@ region = Rect2(96, 384, 48, 48)
 [sub_resource type="AtlasTexture" id="AtlasTexture_6u0j4"]
 atlas = ExtResource("2_fwo3g")
 region = Rect2(144, 384, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6devy"]
+atlas = ExtResource("2_fwo3g")
+region = Rect2(144, 96, 48, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7thc0"]
 atlas = ExtResource("2_fwo3g")
@@ -83,6 +99,10 @@ region = Rect2(96, 288, 48, 48)
 atlas = ExtResource("2_fwo3g")
 region = Rect2(144, 288, 48, 48)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_86d10"]
+atlas = ExtResource("2_fwo3g")
+region = Rect2(144, 0, 48, 48)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_vv3jf"]
 atlas = ExtResource("2_fwo3g")
 region = Rect2(0, 0, 48, 48)
@@ -147,6 +167,10 @@ region = Rect2(96, 336, 48, 48)
 atlas = ExtResource("2_fwo3g")
 region = Rect2(144, 336, 48, 48)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_unfmh"]
+atlas = ExtResource("2_fwo3g")
+region = Rect2(0, 432, 48, 48)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_lo7sp"]
 atlas = ExtResource("2_fwo3g")
 region = Rect2(0, 48, 48, 48)
@@ -210,9 +234,17 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_6u0j4")
 }],
-"loop": true,
+"loop": false,
 "name": &"back_attack",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6devy")
+}],
+"loop": false,
+"name": &"back_hurt",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -233,7 +265,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_g47gx")
 }],
-"loop": true,
+"loop": false,
 "name": &"back_idle",
 "speed": 5.0
 }, {
@@ -273,9 +305,17 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_d2q4d")
 }],
-"loop": true,
+"loop": false,
 "name": &"front_attack",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_86d10")
+}],
+"loop": false,
+"name": &"front_hurt",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -336,9 +376,17 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rxpdq")
 }],
-"loop": true,
+"loop": false,
 "name": &"side_attack",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_unfmh")
+}],
+"loop": false,
+"name": &"side_hurt",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -387,8 +435,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_j1oug"]
-size = Vector2(9, 12)
+[sub_resource type="CircleShape2D" id="CircleShape2D_pu11r"]
+radius = 6.57647
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_jtskl"]
 
@@ -398,13 +446,14 @@ collision_mask = 30
 script = ExtResource("1_7pw3r")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_3j3wf")
 position = Vector2(0, -15)
 sprite_frames = SubResource("SpriteFrames_ey8lr")
-animation = &"front_idle"
+animation = &"back_hurt"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0.5, -4)
-shape = SubResource("RectangleShape2D_j1oug")
+position = Vector2(0, -3)
+shape = SubResource("CircleShape2D_pu11r")
 
 [node name="PlayerHitbox" type="Area2D" parent="."]
 collision_mask = 10
@@ -412,15 +461,7 @@ metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerHitbox"]
 shape = SubResource("CircleShape2D_jtskl")
-
-[node name="Timers" type="Node" parent="."]
-
-[node name="TakeDamageCooldown" type="Timer" parent="Timers"]
-one_shot = true
-
-[node name="AttackCooldown" type="Timer" parent="Timers"]
-wait_time = 0.5
-one_shot = true
+metadata/_edit_lock_ = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(4, 4)
@@ -433,7 +474,30 @@ rotation_smoothing_enabled = true
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 
-[connection signal="body_entered" from="PlayerHitbox" to="." method="_on_player_hitbox_body_entered"]
-[connection signal="body_exited" from="PlayerHitbox" to="." method="_on_player_hitbox_body_exited"]
-[connection signal="timeout" from="Timers/TakeDamageCooldown" to="." method="_on_take_damage_cooldown_timeout"]
-[connection signal="timeout" from="Timers/AttackCooldown" to="." method="_on_attack_cooldown_timeout"]
+[node name="FiniteStateMachine" type="Node" parent="." node_paths=PackedStringArray("current_state")]
+script = ExtResource("3_r3vwb")
+current_state = NodePath("IdleState")
+
+[node name="IdleState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("player", "hitbox")]
+script = ExtResource("4_q03u7")
+player = NodePath("../..")
+hitbox = NodePath("../../PlayerHitbox")
+
+[node name="WalkingState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("player", "hitbox", "anim_player")]
+script = ExtResource("5_fu3va")
+player = NodePath("../..")
+hitbox = NodePath("../../PlayerHitbox")
+anim_player = NodePath("../../AnimatedSprite2D")
+
+[node name="MeleeAttackState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("player", "hitbox", "anim_player")]
+script = ExtResource("6_45hnu")
+player = NodePath("../..")
+hitbox = NodePath("../../PlayerHitbox")
+anim_player = NodePath("../../AnimatedSprite2D")
+
+[node name="HurtState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("player", "hitbox")]
+script = ExtResource("7_yco6u")
+player = NodePath("../..")
+hitbox = NodePath("../../PlayerHitbox")
+
+[node name="Timers" type="Node" parent="."]

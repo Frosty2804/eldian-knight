@@ -1,76 +1,63 @@
 extends CharacterBody2D
 
-var speed = 50
-var is_chasing: bool = false
-var player: CharacterBody2D = null
+const MAX_SPEED = 50
+const acceleration = 100
 
-var health = 100
-var is_entity_in_hitbox_range = false
-var is_invincible = false
+var facing_direction = "right"
+var direction: Vector2 = Vector2.ZERO
+var anim_state : String
+
+@onready var fsm : FiniteStateMachine = $FiniteStateMachine
+@onready var hostile_state = $FiniteStateMachine/SlimeHostileState
+@onready var wander_state = $FiniteStateMachine/SlimeWanderState
+
 
 func _ready():
-	$AnimatedSprite2D.play("side_idle")
+	wander_state.connect("found_player", _on_found_player)
+	hostile_state.connect("lost_player", _on_lost_player)
 
-func _physics_process(delta):
-	damage_handler()
+func _on_found_player(player):
+	hostile_state.player = player
+	fsm.change_state(hostile_state)   
 
-	if health <= 0:
-		queue_free()
+func _on_lost_player():
+	fsm.change_state(wander_state) 
 
-	if is_chasing:
-		chase_player(delta)
+func get_dir_to(object) -> Vector2:
+	if object is CharacterBody2D:
+		return (object.global_position - self.global_position).normalized()
+	elif object is Vector2:
+		return (object - self.global_position).normalized()
 	else:
-		face_player()
+		return Vector2.ZERO
 
-func _on_detection_range_body_entered(body):
-	player = body
-	is_chasing = true
-
-func _on_detection_range_body_exited(_body):
-	player = null
-	is_chasing = false
-
-func _on_slime_hitbox_body_entered(body):
-	if body.is_in_group("Player"):
-		is_entity_in_hitbox_range = true
-
-func _on_slime_hitbox_body_exited(body):
-	if body.is_in_group("Player"):
-		is_entity_in_hitbox_range = false
-
-func _on_take_damage_cooldown_timeout():
-	is_invincible = false
-
-func damage_handler():
-	if is_entity_in_hitbox_range and Globals.is_player_attacking and not is_invincible:
-		health -= 20
-		is_invincible = true
-		$Timers/TakeDamageCooldown.start()
-		if health <= 0:
-			$AnimatedSprite2D.play("death")
-			queue_free()
-
-func chase_player(delta):
-	var dir = (player.position - position).normalized()
-	position += dir * speed * delta
-	if abs(dir.x) > abs(dir.y):
-		$AnimatedSprite2D.play("side_walk")
-		$AnimatedSprite2D.flip_h = dir.x < 0
+func get_dist_to(object) -> float:
+	if object is CharacterBody2D:
+		return self.global_position.distance_to(object.global_position)
+	elif object is Vector2:
+		return self.global_position.distance_to(object)
 	else:
-		if dir.y > 0:
-			$AnimatedSprite2D.play("front_walk")
-		else:
-			$AnimatedSprite2D.play("back_walk")
-	move_and_collide(Vector2(0, 0))
+		return 0.0 
 
-func face_player():
-	if player != null:
-		var dir = (player.position - position).normalized()
-		if abs(dir.x) > abs(dir.y):
-			$AnimatedSprite2D.play("side_idle")
-			$AnimatedSprite2D.flip_h = dir.x < 0
-		else:
-			if dir.y > 0:
-				$AnimatedSprite2D.play("front_idle")
-			else:
-				$AnimatedSprite2D.play("back_idle")
+func play_anim(anim_to_play):
+	anim_state = anim_to_play
+	var anim : AnimatedSprite2D = $AnimatedSprite2D
+	
+	match facing_direction:
+		"right":
+			anim.flip_h = false
+			anim.play("side_" + anim_state)
+		"left":
+			anim.flip_h = true
+			anim.play("side_" + anim_state)
+		"up":
+			anim.play("back_" + anim_state)
+		"down":
+			anim.play("front_" + anim_state)
+
+
+func update_facing_direction():
+	if abs(direction.x) > abs(direction.y):
+		facing_direction = "right" if direction.x > 0 else "left"
+	else:
+		facing_direction = "down" if direction.y > 0 else "up"

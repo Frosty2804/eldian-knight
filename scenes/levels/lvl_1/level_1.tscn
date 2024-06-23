@@ -237,4 +237,4 @@ collision_layer = 16
 collision_mask = 0
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="TempBoundary"]
-polygon = PackedVector2Array(1, -4, 1, 414, 817, 415, 816, -5, 867, 438, -54, 441)
+polygon = PackedVector2Array(1, -4, 1, 414, 584, 414, 578, -5, 816, -5, 867, 438, -54, 441)
