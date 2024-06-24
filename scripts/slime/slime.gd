@@ -3,14 +3,17 @@ extends CharacterBody2D
 const MAX_SPEED = 50
 const acceleration = 100
 
-var facing_direction = "right"
-var direction: Vector2 = Vector2.ZERO
-var anim_state : String
-
 @onready var fsm : FiniteStateMachine = $FiniteStateMachine
 @onready var hostile_state = $FiniteStateMachine/SlimeHostileState
 @onready var wander_state = $FiniteStateMachine/SlimeWanderState
 
+@onready var sprite = $Sprite2D
+@onready var anim_player = $AnimationPlayer
+
+var damage_player = false
+var in_attack = "none"
+var facing_direction = "right"
+var direction: Vector2 = Vector2.ZERO
 
 func _ready():
 	wander_state.connect("found_player", _on_found_player)
@@ -23,37 +26,30 @@ func _on_found_player(player):
 func _on_lost_player():
 	fsm.change_state(wander_state) 
 
-func get_dir_to(object) -> Vector2:
-	if object is CharacterBody2D:
-		return (object.global_position - self.global_position).normalized()
-	elif object is Vector2:
-		return (object - self.global_position).normalized()
-	else:
-		return Vector2.ZERO
 
-func get_dist_to(object) -> float:
-	if object is CharacterBody2D:
-		return self.global_position.distance_to(object.global_position)
-	elif object is Vector2:
-		return self.global_position.distance_to(object)
-	else:
-		return 0.0 
+func create_timer(parent,is_one_shot,connect_func = null) -> Timer:
+	var timer = Timer.new()
+	timer.one_shot = is_one_shot
+	parent.add_child(timer)
+	if connect_func:
+		timer.connect("timeout", connect_func)
+	return timer
 
-func play_anim(anim_to_play):
-	anim_state = anim_to_play
-	var anim : AnimatedSprite2D = $AnimatedSprite2D
+func play_anim(anim_state):
+	if anim_state == "none":
+		pass
 	
 	match facing_direction:
 		"right":
-			anim.flip_h = false
-			anim.play("side_" + anim_state)
+			sprite.flip_h = false
+			anim_player.play("side_" + anim_state)
 		"left":
-			anim.flip_h = true
-			anim.play("side_" + anim_state)
+			sprite.flip_h = true
+			anim_player.play("side_" + anim_state)
 		"up":
-			anim.play("back_" + anim_state)
+			anim_player.play("back_" + anim_state)
 		"down":
-			anim.play("front_" + anim_state)
+			anim_player.play("front_" + anim_state)
 
 
 func update_facing_direction():

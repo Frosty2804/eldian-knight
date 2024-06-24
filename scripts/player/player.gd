@@ -4,6 +4,8 @@ const walk_speed = 60
 const max_speed = 100
 const acceleration = 5
 const deceleration = 8
+const attack_cooldown = 0.4
+const invincibility_cooldown = 1
 
 @onready var fsm = $FiniteStateMachine
 @onready var idle_state = $FiniteStateMachine/IdleState
@@ -11,55 +13,70 @@ const deceleration = 8
 @onready var melee_attack_state = $FiniteStateMachine/MeleeAttackState
 @onready var hurt_state = $FiniteStateMachine/HurtState
 
+@onready var sprite = $Sprite2D
+@onready var anim_player = $AnimationPlayer
+@onready var hit_flash_anim_player = $HitFlashAnimationPlayer
+@onready var timers_list = $Timers
+@onready var hitbox = $PlayerHitbox
+
+var is_invincible = false
+var enemies_in_hitbox = false
+var can_attack = true
 var is_moving = false
 var speed : float = walk_speed
-var anim_state : String
 var direction : Vector2 = Vector2.ZERO
 var facing_direction = "right"
 
 var health = Globals.player_health
+
+var attack_cooldown_timer : Timer
+var invincibility_timer : Timer 
 
 func _ready():
 	idle_state.connect("state_finished", _on_state_finished)
 	walking_state.connect("state_finished", _on_state_finished)
 	melee_attack_state.connect("state_finished", _on_state_finished)
 	hurt_state.connect("state_finished", _on_state_finished)
+	
+	idle_state.connect("init_attack", _start_attack)
+	walking_state.connect("init_attack", _start_attack)
+	
+	hitbox.connect("body_entered", has_body_entered_hitbox)
+	
+	# attack cooldown timer
+	attack_cooldown_timer = create_timer(timers_list, true, _on_attack_cooldown_timeout)
+	invincibility_timer = create_timer(timers_list, true, _on_invincibility_timeout)
 
-func _on_state_finished(next_state):
+
+# state change logic
+
+# general state change function
+func _on_state_finished(next_state : State):
 	fsm.change_state(next_state)
 
+# transition to attack state
+func _start_attack():
+	if can_attack:
+		fsm.change_state(melee_attack_state)
+		can_attack = false
 
-func get_movement_direction():
-	var dir = Vector2.ZERO
-	if Input.is_action_pressed("ui_right"):
-		facing_direction = "right"
-		dir.x = 1
-	elif Input.is_action_pressed("ui_left"):
-		facing_direction = "left"
-		dir.x = -1
-	elif Input.is_action_pressed("ui_up"):
-		facing_direction = "up"
-		dir.y = -1
-	elif Input.is_action_pressed("ui_down"):
-		facing_direction = "down"
-		dir.y = 1
-	return dir
+func _on_attack_cooldown_timeout():
+	# timer started in the melee_attack_state
+	can_attack = true
 
-func play_anim(anim_to_play):
-	anim_state = anim_to_play
-	var anim : AnimatedSprite2D = $AnimatedSprite2D
-	
-	if anim_state == "none":
-		pass
-	
-	match facing_direction:
-		"right":
-			anim.flip_h = false
-			anim.play("side_" + anim_state)
-		"left":
-			anim.flip_h = true
-			anim.play("side_" + anim_state)
-		"up":
-			anim.play("back_" + anim_state)
-		"down":
-			anim.play("front_" + anim_state)
+# transition to hurt state
+func _process(_delta):
+	if not is_invincible:
+		var overlapping_bodies = hitbox.get_overlapping_bodies()
+		for body in overlapping_bodies:
+			if body.damage_player and fsm.current_state != hurt_state:
+				fsm.change_state(hurt_state)
+
+func has_body_entered_hitbox(body):
+	if not is_invincible:
+		if body.damage_player and fsm.current_state != hurt_state:
+			fsm.change_state(hurt_state)
+
+func _on_invincibility_timeout():
+	# timer started in the hurt_state
+	is_invincible = false
