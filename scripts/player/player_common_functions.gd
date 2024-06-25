@@ -1,6 +1,11 @@
 extends Node
 
-func create_timer(parent,is_one_shot,connect_func = null) -> Timer:
+@export var player : CharacterBody2D
+@export var sprite : Sprite2D
+@export var anim_player : AnimationPlayer
+@export var hit_flash_anim_player : AnimationPlayer
+
+func create_timer(parent, is_one_shot, connect_func = null) -> Timer:
 	var timer = Timer.new()
 	timer.one_shot = is_one_shot
 	parent.add_child(timer)
@@ -11,16 +16,16 @@ func create_timer(parent,is_one_shot,connect_func = null) -> Timer:
 func get_movement_direction():
 	var dir = Vector2.ZERO
 	if Input.is_action_pressed("ui_right"):
-		facing_direction = "right"
+		player.facing_direction = "right"
 		dir.x = 1
 	elif Input.is_action_pressed("ui_left"):
-		facing_direction = "left"
+		player.facing_direction = "left"
 		dir.x = -1
 	elif Input.is_action_pressed("ui_up"):
-		facing_direction = "up"
+		player.facing_direction = "up"
 		dir.y = -1
 	elif Input.is_action_pressed("ui_down"):
-		facing_direction = "down"
+		player.facing_direction = "down"
 		dir.y = 1
 	return dir
 
@@ -31,7 +36,7 @@ func play_anim(anim_state, play_hit_flash = false):
 	if play_hit_flash:
 		hit_flash_anim_player.play("hit_flash")
 	
-	match facing_direction:
+	match player.facing_direction:
 		"right":
 			sprite.flip_h = false
 			anim_player.play("side_" + anim_state)

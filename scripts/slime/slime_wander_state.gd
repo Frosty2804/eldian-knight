@@ -1,10 +1,11 @@
 extends State
-class_name SlimeWanderState
+class_name WanderState
 
 signal found_player(player: CharacterBody2D)
 
-@export var actor: CharacterBody2D
-@export var detection_range: Area2D
+@export var actor : CharacterBody2D
+@export var detection_range : Area2D
+@export var comm_funcs : Node
 
 @export var wander_speed: float = 20
 @export var walk_for_time: float = 2.0
@@ -19,8 +20,8 @@ func _ready():
 	
 	# Creating Timers, and adding them to the Node2D "Timers"
 	var timers_list = get_parent().get_parent().get_node("Timers")
-	wander_timer = actor.create_timer(timers_list, true)
-	idle_timer = actor.create_timer(timers_list, true)
+	wander_timer = comm_funcs.create_timer(timers_list, true)
+	idle_timer = comm_funcs.create_timer(timers_list, true)
 
 func _enter_state():
 	actor.velocity = Vector2.ZERO
@@ -31,7 +32,7 @@ func _exit_state():
 
 func _physics_process(delta):
 	# play animations continously 
-	actor.play_anim("walk" if actor.direction != Vector2.ZERO else "idle")
+	comm_funcs.play_anim("walk" if actor.direction != Vector2.ZERO else "idle")
 	
 	# check if the player is already in the detection range, if so exit wander
 	var overlapping_bodies = detection_range.get_overlapping_bodies()
@@ -48,7 +49,7 @@ func _physics_process(delta):
 	var collision = actor.move_and_collide(actor.velocity * delta)
 	if collision:
 		actor.direction = actor.velocity.bounce(collision.get_normal()).normalized()
-		actor.update_facing_direction()
+		comm_funcs.update_facing_direction()
 		actor.velocity = actor.direction * wander_speed
 
 
@@ -56,7 +57,7 @@ func update_wander_direction():
 	if randi() % 2 == 0:
 		actor.direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
 		#update the direction the enemy is facing only if some movement is detected
-		actor.update_facing_direction()
+		comm_funcs.update_facing_direction()
 		wander_timer.start(walk_for_time)
 	else:
 		actor.direction = Vector2.ZERO

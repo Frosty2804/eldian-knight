@@ -1,9 +1,10 @@
-class_name SlimeHostileState
+class_name HostileState
 extends State
 
 @export var actor: CharacterBody2D
 @export var anim_player: AnimationPlayer
 @export var detection_range: Area2D
+@export var comm_funcs: Node
 
 signal lost_player
 
@@ -25,7 +26,11 @@ func _ready():
 	detection_range.connect("body_exited", _on_detection_range_body_exited)
 	
 	var timers_list = get_parent().get_parent().get_node("Timers")
-	attack_cooldown_timer = actor.create_timer(timers_list, true, _on_attack_cooldown_timeout)
+	attack_cooldown_timer = comm_funcs.create_timer(timers_list, true, _on_attack_cooldown_timeout)
+	
+	# connecting the 5th frame of the attack animation, to the 'damage_player' function
+	var attack_animations = ["front_attack", "side_attack", "back_attack"]
+	comm_funcs.call_method_during_anim("FSM/Hostile", 0.5, "damage_player", [], null, attack_animations )
 
 
 func _enter_state():
@@ -38,7 +43,6 @@ func _exit_state():
 	set_physics_process(false)
 
 func _physics_process(_delta):
-	print(actor.in_attack)
 	var distance_to_player = get_dist_to(player)
 	if can_attack:
 		if distance_to_player > long_attack_range and actor.in_attack == "none":
@@ -54,41 +58,41 @@ func _physics_process(_delta):
 			idle()
 
 func chase_player():
-	actor.play_anim("walk")
+	comm_funcs.play_anim("walk")
 	follow(player, actor.MAX_SPEED)
 
 func long_attack():
 	if not actor.in_attack == "long":
 		actor.in_attack = "long"
-		actor.play_anim("attack")
+		comm_funcs.play_anim("attack")
 		target = player.global_position
 	follow(target, actor.MAX_SPEED)
 
 func follow(object, speed):
 	actor.direction = get_dir_to(object)
 	actor.velocity = actor.velocity.move_toward(actor.direction * speed, actor.acceleration * get_process_delta_time())
-	actor.update_facing_direction()
+	comm_funcs.update_facing_direction()
 	var collision = actor.move_and_collide(actor.velocity * get_process_delta_time())
 	#collision handling
 	if collision and collision.get_collider() != player:
 		actor.direction = actor.velocity.bounce(collision.get_normal()).normalized()
-		actor.update_facing_direction()
+		comm_funcs.update_facing_direction()
 		actor.velocity = actor.direction * speed
 
 
 func short_attack():
 	if not actor.in_attack == "short":
 		actor.in_attack = "short"
-		actor.play_anim("attack")
+		comm_funcs.play_anim("attack")
 	face(player)
 
 func idle():
-	actor.play_anim("idle")
+	comm_funcs.play_anim("idle")
 	face(player)
 
 func face(object):
 	actor.direction = get_dir_to(object)
-	actor.update_facing_direction()
+	comm_funcs.update_facing_direction()
 	actor.velocity = Vector2.ZERO
 
 
@@ -117,8 +121,13 @@ func _on_animation_finished(anim_name : String):
 		can_attack = false
 		attack_cooldown_timer.start(attack_cooldown)
 		actor.in_attack = "none"
+		actor.damage_player = false
 
 func _on_detection_range_body_exited(body):
 	if body == player:
 		player = null
 		emit_signal("lost_player")
+
+# hurting player
+func damage_player():
+	actor.damage_player = true

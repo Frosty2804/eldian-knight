@@ -3,6 +3,7 @@ extends State
 
 @export var player : CharacterBody2D
 @export var anim_player : AnimationPlayer
+@export var comm_funcs : Node
 
 signal init_attack
 
@@ -21,8 +22,10 @@ func _exit_state():
 	set_physics_process(false)
 
 func _physics_process(_delta):
-	player.play_anim("walk")
+	# playing the animation
+	comm_funcs.play_anim("walk")
 	
+	# handing sprinting and movement
 	var sprinting = Input.is_action_pressed("ui_sprint")
 	
 	if sprinting:
@@ -41,7 +44,7 @@ func _physics_process(_delta):
 	player.move_and_slide()
 	
 	# keep checking if player has stopped moving
-	player.direction = player.get_movement_direction()
+	player.direction = comm_funcs.get_movement_direction()
 	player.is_moving = true if (player.direction != Vector2.ZERO) else false
 	if not player.is_moving:
 		state_finished.emit(player.idle_state)

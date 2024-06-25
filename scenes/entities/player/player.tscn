@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://cwsbvhhhmfgka"]
+[gd_scene load_steps=31 format=3 uid="uid://cwsbvhhhmfgka"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_7pw3r"]
 [ext_resource type="Shader" uid="uid://dm1mrd5ixywnx" path="res://shaders/hit_flash.tres" id="2_buj7m"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/player/walking_state.gd" id="5_fu3va"]
 [ext_resource type="Script" path="res://scripts/player/melee_attack_state.gd" id="6_45hnu"]
 [ext_resource type="Script" path="res://scripts/player/hurt_state.gd" id="7_yco6u"]
+[ext_resource type="Script" path="res://scripts/player/player_common_functions.gd" id="9_jpojx"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vy4w6"]
 resource_local_to_scene = true
@@ -336,28 +337,39 @@ metadata/_edit_lock_ = true
 position = Vector2(0, -9)
 shape = SubResource("CircleShape2D_jtskl")
 
-[node name="FiniteStateMachine" type="Node" parent="." node_paths=PackedStringArray("current_state")]
+[node name="FSM" type="Node" parent="." node_paths=PackedStringArray("current_state")]
 script = ExtResource("3_r3vwb")
-current_state = NodePath("IdleState")
+current_state = NodePath("Idle")
 
-[node name="IdleState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("player")]
+[node name="Idle" type="Node" parent="FSM" node_paths=PackedStringArray("player", "comm_funcs")]
 script = ExtResource("4_q03u7")
 player = NodePath("../..")
+comm_funcs = NodePath("../../PlayerCommonFunctions")
 
-[node name="WalkingState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("player", "anim_player")]
+[node name="Walking" type="Node" parent="FSM" node_paths=PackedStringArray("player", "anim_player", "comm_funcs")]
 script = ExtResource("5_fu3va")
 player = NodePath("../..")
 anim_player = NodePath("../../AnimationPlayer")
+comm_funcs = NodePath("../../PlayerCommonFunctions")
 
-[node name="MeleeAttackState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("player", "anim_player")]
+[node name="MeleeAttack" type="Node" parent="FSM" node_paths=PackedStringArray("player", "anim_player", "comm_funcs")]
 script = ExtResource("6_45hnu")
 player = NodePath("../..")
 anim_player = NodePath("../../AnimationPlayer")
+comm_funcs = NodePath("../../PlayerCommonFunctions")
 
-[node name="HurtState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("player", "hitbox")]
+[node name="Hurt" type="Node" parent="FSM" node_paths=PackedStringArray("player", "hitbox", "comm_funcs")]
 script = ExtResource("7_yco6u")
 player = NodePath("../..")
 hitbox = NodePath("../../PlayerHitbox")
+comm_funcs = NodePath("../../PlayerCommonFunctions")
+
+[node name="PlayerCommonFunctions" type="Node" parent="." node_paths=PackedStringArray("player", "sprite", "anim_player", "hit_flash_anim_player")]
+script = ExtResource("9_jpojx")
+player = NodePath("..")
+sprite = NodePath("../Sprite2D")
+anim_player = NodePath("../AnimationPlayer")
+hit_flash_anim_player = NodePath("../HitFlashAnimationPlayer")
 
 [node name="Timers" type="Node" parent="."]
 

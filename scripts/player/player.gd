@@ -7,15 +7,13 @@ const deceleration = 8
 const attack_cooldown = 0.4
 const invincibility_cooldown = 1
 
-@onready var fsm = $FiniteStateMachine
-@onready var idle_state = $FiniteStateMachine/IdleState
-@onready var walking_state = $FiniteStateMachine/WalkingState
-@onready var melee_attack_state = $FiniteStateMachine/MeleeAttackState
-@onready var hurt_state = $FiniteStateMachine/HurtState
+@onready var common_funcs = $PlayerCommonFunctions
+@onready var fsm : FiniteStateMachine = $FSM
+@onready var idle_state = $FSM/Idle
+@onready var walking_state = $FSM/Walking
+@onready var melee_attack_state = $FSM/MeleeAttack
+@onready var hurt_state = $FSM/Hurt
 
-@onready var sprite = $Sprite2D
-@onready var anim_player = $AnimationPlayer
-@onready var hit_flash_anim_player = $HitFlashAnimationPlayer
 @onready var timers_list = $Timers
 @onready var hitbox = $PlayerHitbox
 
@@ -44,8 +42,8 @@ func _ready():
 	hitbox.connect("body_entered", has_body_entered_hitbox)
 	
 	# attack cooldown timer
-	attack_cooldown_timer = create_timer(timers_list, true, _on_attack_cooldown_timeout)
-	invincibility_timer = create_timer(timers_list, true, _on_invincibility_timeout)
+	attack_cooldown_timer = common_funcs.create_timer(timers_list, true, _on_attack_cooldown_timeout)
+	invincibility_timer = common_funcs.create_timer(timers_list, true, _on_invincibility_timeout)
 
 
 # state change logic
@@ -73,8 +71,7 @@ func _process(_delta):
 				fsm.change_state(hurt_state)
 
 func has_body_entered_hitbox(body):
-	if not is_invincible:
-		if body.damage_player and fsm.current_state != hurt_state:
+	if not is_invincible and body.damage_player and fsm.current_state != hurt_state:
 			fsm.change_state(hurt_state)
 
 func _on_invincibility_timeout():

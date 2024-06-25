@@ -1,10 +1,11 @@
-[gd_scene load_steps=24 format=3 uid="uid://wgehhi1whphq"]
+[gd_scene load_steps=25 format=3 uid="uid://wgehhi1whphq"]
 
 [ext_resource type="Script" path="res://scripts/slime/slime.gd" id="1_ixyj7"]
 [ext_resource type="Texture2D" uid="uid://ba7pojxpscxss" path="res://art/1. mystic_woods/sprites/characters/slime.png" id="2_ph000"]
 [ext_resource type="Script" path="res://scripts/fsm/FiniteStateMachine.gd" id="3_tafpa"]
 [ext_resource type="Script" path="res://scripts/slime/slime_wander_state.gd" id="5_5jduj"]
 [ext_resource type="Script" path="res://scripts/slime/slime_hostile_state.gd" id="5_vxhmm"]
+[ext_resource type="Script" path="res://scripts/slime/common_functions.gd" id="6_8o3w5"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_x5eym"]
 radius = 7.0
@@ -298,20 +299,28 @@ position = Vector2(0, -3)
 shape = SubResource("CircleShape2D_38tqc")
 metadata/_edit_lock_ = true
 
-[node name="FiniteStateMachine" type="Node" parent="." node_paths=PackedStringArray("current_state")]
+[node name="FSM" type="Node" parent="." node_paths=PackedStringArray("current_state")]
 script = ExtResource("3_tafpa")
-current_state = NodePath("SlimeWanderState")
+current_state = NodePath("Wander")
 
-[node name="SlimeHostileState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("actor", "anim_player", "detection_range")]
+[node name="Hostile" type="Node" parent="FSM" node_paths=PackedStringArray("actor", "anim_player", "detection_range", "comm_funcs")]
 script = ExtResource("5_vxhmm")
 actor = NodePath("../..")
 anim_player = NodePath("../../AnimationPlayer")
 detection_range = NodePath("../../DetectionRange")
+comm_funcs = NodePath("../../CommonFunctions")
 
-[node name="SlimeWanderState" type="Node" parent="FiniteStateMachine" node_paths=PackedStringArray("actor", "detection_range")]
+[node name="Wander" type="Node" parent="FSM" node_paths=PackedStringArray("actor", "detection_range", "comm_funcs")]
 script = ExtResource("5_5jduj")
 actor = NodePath("../..")
 detection_range = NodePath("../../DetectionRange")
+comm_funcs = NodePath("../../CommonFunctions")
+
+[node name="CommonFunctions" type="Node" parent="." node_paths=PackedStringArray("actor", "sprite", "anim_player")]
+script = ExtResource("6_8o3w5")
+actor = NodePath("..")
+sprite = NodePath("../Sprite2D")
+anim_player = NodePath("../AnimationPlayer")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

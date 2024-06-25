@@ -3,11 +3,12 @@ extends State
 
 @export var player : CharacterBody2D
 @export var anim_player : AnimationPlayer
+@export var comm_funcs : Node
 
 func _enter_state():
 	Globals.is_player_attacking = true
 	player.velocity = Vector2.ZERO
-	player.play_anim("attack")
+	comm_funcs.play_anim("attack")
 	anim_player.connect("animation_finished", _on_animation_finished)
 
 func _exit_state():
