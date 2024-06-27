@@ -1,10 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://dl43ns3x4ejrp"]
+[gd_scene load_steps=9 format=3 uid="uid://dl43ns3x4ejrp"]
 
 [ext_resource type="Texture2D" uid="uid://b0dxkmvr2ucfa" path="res://art/1. mystic_woods/sprites/objects/objects.png" id="1_g5j4v"]
 [ext_resource type="Texture2D" uid="uid://b7j0cl6fcgsv0" path="res://art/1. mystic_woods/sprites/tilesets/grass.png" id="2_htsoj"]
 [ext_resource type="Texture2D" uid="uid://c8prwcgbotoqa" path="res://art/1. mystic_woods/sprites/tilesets/plains.png" id="3_smeve"]
 [ext_resource type="PackedScene" uid="uid://cwsbvhhhmfgka" path="res://scenes/entities/player/player.tscn" id="4_sl88l"]
-[ext_resource type="PackedScene" uid="uid://wgehhi1whphq" path="res://scenes/entities/slime/slime.tscn" id="5_ggdd7"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l03h6"]
 texture = ExtResource("1_g5j4v")
@@ -228,9 +227,6 @@ layer_2/tile_data = PackedInt32Array(458782, 0, 5, 589852, 524288, 6, 589856, 39
 
 [node name="Player" parent="." instance=ExtResource("4_sl88l")]
 position = Vector2(154, 163)
-
-[node name="Slime" parent="." instance=ExtResource("5_ggdd7")]
-position = Vector2(489, 280)
 
 [node name="TempBoundary" type="StaticBody2D" parent="."]
 collision_layer = 16

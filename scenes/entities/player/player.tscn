@@ -1,14 +1,16 @@
-[gd_scene load_steps=31 format=3 uid="uid://cwsbvhhhmfgka"]
+[gd_scene load_steps=33 format=3 uid="uid://cwsbvhhhmfgka"]
 
-[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_7pw3r"]
-[ext_resource type="Shader" uid="uid://dm1mrd5ixywnx" path="res://shaders/hit_flash.tres" id="2_buj7m"]
+[ext_resource type="Shader" uid="uid://dm1mrd5ixywnx" path="res://assets/shaders/shared/hit_flash.tres" id="2_buj7m"]
 [ext_resource type="Texture2D" uid="uid://c3rdyodlrpwho" path="res://art/1. mystic_woods/sprites/characters/player.png" id="2_fwo3g"]
-[ext_resource type="Script" path="res://scripts/fsm/FiniteStateMachine.gd" id="3_r3vwb"]
-[ext_resource type="Script" path="res://scripts/player/idle_state.gd" id="4_q03u7"]
-[ext_resource type="Script" path="res://scripts/player/walking_state.gd" id="5_fu3va"]
-[ext_resource type="Script" path="res://scripts/player/melee_attack_state.gd" id="6_45hnu"]
-[ext_resource type="Script" path="res://scripts/player/hurt_state.gd" id="7_yco6u"]
-[ext_resource type="Script" path="res://scripts/player/player_common_functions.gd" id="9_jpojx"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/movement_component.gd" id="3_c2p7l"]
+[ext_resource type="Resource" uid="uid://ckmdo05p5xet6" path="res://resources/entities/player/player_stats.tres" id="4_5u1ko"]
+[ext_resource type="Script" path="res://scripts/entities/player/components/input_handler.gd" id="4_27na0"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/anim_component.gd" id="4_nkcud"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/attack_component.gd" id="6_x3g43"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/FiniteStateMachine.gd" id="7_gymax"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/idle.gd" id="8_2owty"]
+[ext_resource type="Script" path="res://scripts/entities/player/states/player_walk.gd" id="9_yhdlc"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/attack.gd" id="11_fbbus"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vy4w6"]
 resource_local_to_scene = true
@@ -313,7 +315,6 @@ _data = {
 [node name="Player" type="CharacterBody2D" groups=["Player"]]
 y_sort_enabled = true
 collision_mask = 30
-script = ExtResource("1_7pw3r")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 y_sort_enabled = true
@@ -337,39 +338,45 @@ metadata/_edit_lock_ = true
 position = Vector2(0, -9)
 shape = SubResource("CircleShape2D_jtskl")
 
-[node name="FSM" type="Node" parent="." node_paths=PackedStringArray("current_state")]
-script = ExtResource("3_r3vwb")
-current_state = NodePath("Idle")
+[node name="InputHandler" type="Node" parent="."]
+script = ExtResource("4_27na0")
+player_stats = ExtResource("4_5u1ko")
 
-[node name="Idle" type="Node" parent="FSM" node_paths=PackedStringArray("player", "comm_funcs")]
-script = ExtResource("4_q03u7")
-player = NodePath("../..")
-comm_funcs = NodePath("../../PlayerCommonFunctions")
+[node name="MovementComponent" type="Node" parent="." node_paths=PackedStringArray("idle_state", "walk_state")]
+script = ExtResource("3_c2p7l")
+entity_stats = ExtResource("4_5u1ko")
+idle_state = NodePath("../FSM/IdleState")
+walk_state = NodePath("../FSM/PlayerWalkState")
 
-[node name="Walking" type="Node" parent="FSM" node_paths=PackedStringArray("player", "anim_player", "comm_funcs")]
-script = ExtResource("5_fu3va")
-player = NodePath("../..")
-anim_player = NodePath("../../AnimationPlayer")
-comm_funcs = NodePath("../../PlayerCommonFunctions")
+[node name="AttackComponent" type="Node" parent="." node_paths=PackedStringArray("attack_state")]
+script = ExtResource("6_x3g43")
+entity_stats = ExtResource("4_5u1ko")
+attack_state = NodePath("../FSM/AttackState")
 
-[node name="MeleeAttack" type="Node" parent="FSM" node_paths=PackedStringArray("player", "anim_player", "comm_funcs")]
-script = ExtResource("6_45hnu")
-player = NodePath("../..")
-anim_player = NodePath("../../AnimationPlayer")
-comm_funcs = NodePath("../../PlayerCommonFunctions")
-
-[node name="Hurt" type="Node" parent="FSM" node_paths=PackedStringArray("player", "hitbox", "comm_funcs")]
-script = ExtResource("7_yco6u")
-player = NodePath("../..")
-hitbox = NodePath("../../PlayerHitbox")
-comm_funcs = NodePath("../../PlayerCommonFunctions")
-
-[node name="PlayerCommonFunctions" type="Node" parent="." node_paths=PackedStringArray("player", "sprite", "anim_player", "hit_flash_anim_player")]
-script = ExtResource("9_jpojx")
-player = NodePath("..")
+[node name="AnimationComponent" type="Node" parent="." node_paths=PackedStringArray("sprite", "anim_player")]
+script = ExtResource("4_nkcud")
 sprite = NodePath("../Sprite2D")
 anim_player = NodePath("../AnimationPlayer")
-hit_flash_anim_player = NodePath("../HitFlashAnimationPlayer")
+entity_stats = ExtResource("4_5u1ko")
+
+[node name="FSM" type="Node" parent="." node_paths=PackedStringArray("current_state")]
+script = ExtResource("7_gymax")
+current_state = NodePath("IdleState")
+
+[node name="IdleState" type="Node" parent="FSM" node_paths=PackedStringArray("anim")]
+script = ExtResource("8_2owty")
+anim = NodePath("../../AnimationComponent")
+
+[node name="PlayerWalkState" type="Node" parent="FSM" node_paths=PackedStringArray("anim", "actor")]
+script = ExtResource("9_yhdlc")
+player_stats = ExtResource("4_5u1ko")
+anim = NodePath("../../AnimationComponent")
+actor = NodePath("../..")
+entity_stats = ExtResource("4_5u1ko")
+
+[node name="AttackState" type="Node" parent="FSM" node_paths=PackedStringArray("anim")]
+script = ExtResource("11_fbbus")
+anim = NodePath("../../AnimationComponent")
 
 [node name="Timers" type="Node" parent="."]
 

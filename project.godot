@@ -15,10 +15,6 @@ run/main_scene="res://scenes/levels/lvl_1/level_1.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 run/layer_3="Items&Zones"
 
-[autoload]
-
-Globals="*res://scripts/globals/globals.gd"
-
 [input]
 
 ui_left={
