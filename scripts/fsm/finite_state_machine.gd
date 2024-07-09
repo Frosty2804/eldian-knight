@@ -1,5 +1,4 @@
-class_name FiniteStateMachine
-extends Node
+class_name FSM extends Node2D
 
 @export var current_state: State
 

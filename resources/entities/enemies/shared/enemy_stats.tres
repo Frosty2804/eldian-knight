@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyStats" load_steps=2 format=3 uid="uid://crrcj5vkabxqh"]
+
+[ext_resource type="Script" path="res://scripts/entities/enemies/shared/resources/enemy_stats.gd" id="1_myuve"]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource("1_myuve")
+health = 100.0
+walk_speed = 35.0
+max_speed = 45.0
+acceleration = 50.0
