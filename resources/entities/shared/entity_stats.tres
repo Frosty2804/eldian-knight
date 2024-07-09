@@ -1,7 +1,10 @@
-[gd_resource type="Resource" script_class="MovableEntityStats" load_steps=2 format=3 uid="uid://b8q6qm8kb6co3"]
+[gd_resource type="Resource" script_class="EntityStats" load_steps=2 format=3 uid="uid://b8q6qm8kb6co3"]
 
 [ext_resource type="Script" path="res://scripts/entities/shared/resources/entity_stats.gd" id="1_f4udj"]
 
 [resource]
+resource_local_to_scene = true
 script = ExtResource("1_f4udj")
-speed = 100.0
+walk_speed = 40.0
+max_speed = 60.0
+acceleration = 6.0

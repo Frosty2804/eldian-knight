@@ -4,4 +4,7 @@
 
 [resource]
 script = ExtResource("1_8mpm6")
-speed = 100.0
+health = 100.0
+min_speed = 60.0
+max_speed = 100.0
+acceleration = 150.0

@@ -1,16 +1,23 @@
-[gd_scene load_steps=33 format=3 uid="uid://cwsbvhhhmfgka"]
+[gd_scene load_steps=43 format=3 uid="uid://cwsbvhhhmfgka"]
 
+[ext_resource type="Script" path="res://scripts/entities/player/player.gd" id="1_jt8wm"]
 [ext_resource type="Shader" uid="uid://dm1mrd5ixywnx" path="res://assets/shaders/shared/hit_flash.tres" id="2_buj7m"]
 [ext_resource type="Texture2D" uid="uid://c3rdyodlrpwho" path="res://art/1. mystic_woods/sprites/characters/player.png" id="2_fwo3g"]
-[ext_resource type="Script" path="res://scripts/entities/shared/components/movement_component.gd" id="3_c2p7l"]
-[ext_resource type="Resource" uid="uid://ckmdo05p5xet6" path="res://resources/entities/player/player_stats.tres" id="4_5u1ko"]
-[ext_resource type="Script" path="res://scripts/entities/player/components/input_handler.gd" id="4_27na0"]
-[ext_resource type="Script" path="res://scripts/entities/shared/components/anim_component.gd" id="4_nkcud"]
-[ext_resource type="Script" path="res://scripts/entities/shared/components/attack_component.gd" id="6_x3g43"]
-[ext_resource type="Script" path="res://scripts/entities/shared/states/FiniteStateMachine.gd" id="7_gymax"]
-[ext_resource type="Script" path="res://scripts/entities/shared/states/idle.gd" id="8_2owty"]
-[ext_resource type="Script" path="res://scripts/entities/player/states/player_walk.gd" id="9_yhdlc"]
-[ext_resource type="Script" path="res://scripts/entities/shared/states/attack.gd" id="11_fbbus"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/entity_movement_component.gd" id="3_riwmd"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/entity_anim_component.gd" id="4_3guep"]
+[ext_resource type="Resource" uid="uid://ckmdo05p5xet6" path="res://resources/entities/player/player_stats.tres" id="4_m53bu"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/entity_attack_component.gd" id="5_c73gb"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/entity_hurtbox_component.gd" id="5_goxnr"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/entity_idle.gd" id="5_mj20d"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/entity_walk.gd" id="6_r46d2"]
+[ext_resource type="Script" path="res://scripts/entities/player/components/player_sprint_component.gd" id="7_4wyip"]
+[ext_resource type="Script" path="res://scripts/fsm/finite_state_machine.gd" id="7_gymax"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/timers_component.gd" id="9_lr3xf"]
+[ext_resource type="Script" path="res://scripts/entities/player/states/player_sprint_state.gd" id="11_2ei5o"]
+[ext_resource type="Script" path="res://scripts/entities/player/states/player_basic_attack_state.gd" id="14_wm882"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/entity_hurt.gd" id="16_7jrph"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/entity_hitbox_component.gd" id="16_g3a36"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/entity_death.gd" id="18_epcdh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vy4w6"]
 resource_local_to_scene = true
@@ -21,8 +28,18 @@ shader_parameter/tint = Color(1, 1, 1, 1)
 [sub_resource type="CircleShape2D" id="CircleShape2D_pu11r"]
 radius = 7.07107
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_jtskl"]
-radius = 15.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_08tca"]
+radius = 7.0
+height = 24.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1hbth"]
+size = Vector2(30, 31)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yt6vr"]
+size = Vector2(33, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uo1w0"]
+size = Vector2(34, 24)
 
 [sub_resource type="Animation" id="Animation_knkmv"]
 length = 0.001
@@ -312,9 +329,28 @@ _data = {
 "hit_flash": SubResource("Animation_6vho7")
 }
 
-[node name="Player" type="CharacterBody2D" groups=["Player"]]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("hitflash_anim_player", "sprint_comp", "attack_comp", "hurtbox", "sprint_state", "hurt_state", "attack_states", "fsm", "sprite", "anim_player", "move_comp", "anim_comp", "timer_comp", "idle_state", "walk_state", "death_state") groups=["Player"]]
 y_sort_enabled = true
 collision_mask = 30
+script = ExtResource("1_jt8wm")
+stats = ExtResource("4_m53bu")
+hitflash_anim_player = NodePath("HitFlashAnimationPlayer")
+sprint_comp = NodePath("PlayerSprintComponent")
+attack_comp = NodePath("EntityAttackComponent")
+hurtbox = NodePath("EntityHurtbox")
+sprint_state = NodePath("FSM/PlayerSprintState")
+hurt_state = NodePath("FSM/EntityHurtState")
+attack_states = [NodePath("FSM/PlayerBasicAttackState")]
+fsm = NodePath("FSM")
+sprite = NodePath("Sprite2D")
+anim_player = NodePath("AnimationPlayer")
+move_comp = NodePath("EntityMovementComponent")
+anim_comp = NodePath("EntityAnimationComponent")
+timer_comp = NodePath("TimersComponent")
+idle_state = NodePath("FSM/EntityIdleState")
+walk_state = NodePath("FSM/EntityWalkState")
+death_state = NodePath("FSM/EntityDeathState")
+metadata/_edit_lock_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 y_sort_enabled = true
@@ -329,56 +365,72 @@ position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_pu11r")
 metadata/_edit_lock_ = true
 
-[node name="PlayerHitbox" type="Area2D" parent="."]
-collision_mask = 10
-metadata/_edit_group_ = true
-metadata/_edit_lock_ = true
+[node name="TimersComponent" type="Node" parent="."]
+script = ExtResource("9_lr3xf")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerHitbox"]
+[node name="EntityHurtbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("5_goxnr")
+invincible_for = 0.1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EntityHurtbox"]
 position = Vector2(0, -9)
-shape = SubResource("CircleShape2D_jtskl")
+shape = SubResource("CapsuleShape2D_08tca")
 
-[node name="InputHandler" type="Node" parent="."]
-script = ExtResource("4_27na0")
-player_stats = ExtResource("4_5u1ko")
+[node name="EntityAnimationComponent" type="Node" parent="."]
+script = ExtResource("4_3guep")
 
-[node name="MovementComponent" type="Node" parent="." node_paths=PackedStringArray("idle_state", "walk_state")]
-script = ExtResource("3_c2p7l")
-entity_stats = ExtResource("4_5u1ko")
-idle_state = NodePath("../FSM/IdleState")
-walk_state = NodePath("../FSM/PlayerWalkState")
+[node name="EntityAttackComponent" type="Node" parent="."]
+script = ExtResource("5_c73gb")
 
-[node name="AttackComponent" type="Node" parent="." node_paths=PackedStringArray("attack_state")]
-script = ExtResource("6_x3g43")
-entity_stats = ExtResource("4_5u1ko")
-attack_state = NodePath("../FSM/AttackState")
+[node name="EntityMovementComponent" type="Node" parent="."]
+script = ExtResource("3_riwmd")
 
-[node name="AnimationComponent" type="Node" parent="." node_paths=PackedStringArray("sprite", "anim_player")]
-script = ExtResource("4_nkcud")
-sprite = NodePath("../Sprite2D")
-anim_player = NodePath("../AnimationPlayer")
-entity_stats = ExtResource("4_5u1ko")
+[node name="PlayerSprintComponent" type="Node" parent="."]
+script = ExtResource("7_4wyip")
 
-[node name="FSM" type="Node" parent="." node_paths=PackedStringArray("current_state")]
+[node name="FSM" type="Node2D" parent="." node_paths=PackedStringArray("current_state")]
 script = ExtResource("7_gymax")
-current_state = NodePath("IdleState")
+current_state = NodePath("EntityIdleState")
 
-[node name="IdleState" type="Node" parent="FSM" node_paths=PackedStringArray("anim")]
-script = ExtResource("8_2owty")
-anim = NodePath("../../AnimationComponent")
+[node name="EntityIdleState" type="Node2D" parent="FSM"]
+script = ExtResource("5_mj20d")
 
-[node name="PlayerWalkState" type="Node" parent="FSM" node_paths=PackedStringArray("anim", "actor")]
-script = ExtResource("9_yhdlc")
-player_stats = ExtResource("4_5u1ko")
-anim = NodePath("../../AnimationComponent")
-actor = NodePath("../..")
-entity_stats = ExtResource("4_5u1ko")
+[node name="EntityWalkState" type="Node2D" parent="FSM"]
+script = ExtResource("6_r46d2")
 
-[node name="AttackState" type="Node" parent="FSM" node_paths=PackedStringArray("anim")]
-script = ExtResource("11_fbbus")
-anim = NodePath("../../AnimationComponent")
+[node name="PlayerSprintState" type="Node2D" parent="FSM"]
+script = ExtResource("11_2ei5o")
 
-[node name="Timers" type="Node" parent="."]
+[node name="PlayerBasicAttackState" type="Node2D" parent="FSM"]
+script = ExtResource("14_wm882")
+
+[node name="Hitbox" type="Area2D" parent="FSM/PlayerBasicAttackState"]
+visible = false
+script = ExtResource("16_g3a36")
+attack_start = 0.05
+attack_end = 0.35
+hitbox_path = "FSM/PlayerBasicAttackState/Hitbox"
+damage = 10.0
+
+[node name="side" type="CollisionShape2D" parent="FSM/PlayerBasicAttackState/Hitbox"]
+position = Vector2(14, -7.5)
+shape = SubResource("RectangleShape2D_1hbth")
+
+[node name="front" type="CollisionShape2D" parent="FSM/PlayerBasicAttackState/Hitbox"]
+position = Vector2(0.5, 2)
+shape = SubResource("RectangleShape2D_yt6vr")
+
+[node name="back" type="CollisionShape2D" parent="FSM/PlayerBasicAttackState/Hitbox"]
+position = Vector2(-1, -18)
+shape = SubResource("RectangleShape2D_uo1w0")
+
+[node name="EntityHurtState" type="Node2D" parent="FSM"]
+script = ExtResource("16_7jrph")
+
+[node name="EntityDeathState" type="Node2D" parent="FSM"]
+script = ExtResource("18_epcdh")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -400,3 +452,4 @@ limit_smoothed = true
 rotation_smoothing_enabled = true
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
+metadata/_edit_lock_ = true
