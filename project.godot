@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Eldian Knight"
-run/main_scene="res://scenes/levels/lvl_1/level_1.tscn"
+run/main_scene="res://scenes/levels/lvl_0/level_0.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 run/layer_3="Items&Zones"
 

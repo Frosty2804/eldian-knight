@@ -45,10 +45,11 @@ func _on_area_entered(area):
 	accumulated_dmg += area.damage
 	knockback += (owner.global_position - area.owner.global_position).normalized() * knockback_multiplier
 	enemy_count += 1
+	area.attack_connected.emit()
 	area.in_damage_frame = false
 
 func take_damage():
-	stats.health -= accumulated_dmg
+	owner._set_health(stats.health - accumulated_dmg)
 	hurt_state.knockback = knockback / enemy_count
 	change_state.emit(hurt_state)
 	accumulated_dmg = 0

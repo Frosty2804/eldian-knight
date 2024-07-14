@@ -1,11 +1,11 @@
-[gd_scene load_steps=43 format=3 uid="uid://cwsbvhhhmfgka"]
+[gd_scene load_steps=45 format=3 uid="uid://cwsbvhhhmfgka"]
 
 [ext_resource type="Script" path="res://scripts/entities/player/player.gd" id="1_jt8wm"]
 [ext_resource type="Shader" uid="uid://dm1mrd5ixywnx" path="res://assets/shaders/shared/hit_flash.tres" id="2_buj7m"]
 [ext_resource type="Texture2D" uid="uid://c3rdyodlrpwho" path="res://art/1. mystic_woods/sprites/characters/player.png" id="2_fwo3g"]
+[ext_resource type="Script" path="res://scripts/entities/player/resources/player_stats.gd" id="2_pkfog"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_movement_component.gd" id="3_riwmd"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_anim_component.gd" id="4_3guep"]
-[ext_resource type="Resource" uid="uid://ckmdo05p5xet6" path="res://resources/entities/player/player_stats.tres" id="4_m53bu"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_attack_component.gd" id="5_c73gb"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_hurtbox_component.gd" id="5_goxnr"]
 [ext_resource type="Script" path="res://scripts/entities/shared/states/entity_idle.gd" id="5_mj20d"]
@@ -18,6 +18,15 @@
 [ext_resource type="Script" path="res://scripts/entities/shared/states/entity_hurt.gd" id="16_7jrph"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_hitbox_component.gd" id="16_g3a36"]
 [ext_resource type="Script" path="res://scripts/entities/shared/states/entity_death.gd" id="18_epcdh"]
+[ext_resource type="PackedScene" uid="uid://dtysoabuc2buy" path="res://scenes/ui/healthbar.tscn" id="19_ano08"]
+
+[sub_resource type="Resource" id="Resource_16vn6"]
+resource_local_to_scene = true
+script = ExtResource("2_pkfog")
+health = 100.0
+min_speed = 60.0
+max_speed = 100.0
+acceleration = 75.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vy4w6"]
 resource_local_to_scene = true
@@ -329,28 +338,22 @@ _data = {
 "hit_flash": SubResource("Animation_6vho7")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("hitflash_anim_player", "sprint_comp", "attack_comp", "hurtbox", "sprint_state", "hurt_state", "attack_states", "fsm", "sprite", "anim_player", "move_comp", "anim_comp", "timer_comp", "idle_state", "walk_state", "death_state") groups=["Player"]]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("hitflash_anim_player", "sprint_comp", "attack_comp", "sprint_state", "hurt_state", "attack_states") groups=["Player"]]
+z_index = 1
 y_sort_enabled = true
 collision_mask = 30
 script = ExtResource("1_jt8wm")
-stats = ExtResource("4_m53bu")
+stats = SubResource("Resource_16vn6")
 hitflash_anim_player = NodePath("HitFlashAnimationPlayer")
 sprint_comp = NodePath("PlayerSprintComponent")
 attack_comp = NodePath("EntityAttackComponent")
-hurtbox = NodePath("EntityHurtbox")
 sprint_state = NodePath("FSM/PlayerSprintState")
 hurt_state = NodePath("FSM/EntityHurtState")
 attack_states = [NodePath("FSM/PlayerBasicAttackState")]
-fsm = NodePath("FSM")
-sprite = NodePath("Sprite2D")
-anim_player = NodePath("AnimationPlayer")
-move_comp = NodePath("EntityMovementComponent")
-anim_comp = NodePath("EntityAnimationComponent")
-timer_comp = NodePath("TimersComponent")
-idle_state = NodePath("FSM/EntityIdleState")
-walk_state = NodePath("FSM/EntityWalkState")
-death_state = NodePath("FSM/EntityDeathState")
 metadata/_edit_lock_ = true
+
+[node name="TimersComponent" type="Node" parent="."]
+script = ExtResource("9_lr3xf")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 y_sort_enabled = true
@@ -365,8 +368,11 @@ position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_pu11r")
 metadata/_edit_lock_ = true
 
-[node name="TimersComponent" type="Node" parent="."]
-script = ExtResource("9_lr3xf")
+[node name="Healthbar" parent="." instance=ExtResource("19_ano08")]
+offset_left = -9.0
+offset_top = 3.0
+offset_right = 10.0
+offset_bottom = 5.0
 
 [node name="EntityHurtbox" type="Area2D" parent="."]
 collision_layer = 0
@@ -441,15 +447,3 @@ libraries = {
 libraries = {
 "": SubResource("AnimationLibrary_ismu2")
 }
-
-[node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(4, 4)
-limit_left = 0
-limit_top = 0
-limit_right = 816
-limit_bottom = 416
-limit_smoothed = true
-rotation_smoothing_enabled = true
-drag_horizontal_enabled = true
-drag_vertical_enabled = true
-metadata/_edit_lock_ = true

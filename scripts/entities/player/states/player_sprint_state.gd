@@ -22,6 +22,7 @@ func _exit_state():
 	set_physics_process(false)
 
 func _physics_process(delta):
+	anim_comp.play_anim("walk")
 	owner.move_towards(stats.direction)
 	# Accelerate to sprint speed
 	stats.current_speed = min(stats.current_speed + stats.acceleration, sprint_speed)

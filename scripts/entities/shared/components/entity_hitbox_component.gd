@@ -7,6 +7,7 @@ class_name Hitbox extends Area2D
 var stats : EntityStats
 var in_damage_frame : bool = false
 
+signal attack_connected
 
 func _ready():
 	stats = owner.stats

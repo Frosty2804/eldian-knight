@@ -1,27 +1,40 @@
 class_name Entity extends CharacterBody2D
 
 # Components
-@export var fsm : FSM
-@export var sprite : Sprite2D
-@export var anim_player : AnimationPlayer
-@export var move_comp : EntityMovementComponent
-@export var anim_comp : EntityAnimationComponent
-@export var timer_comp : TimersComponent
+@onready var sprite = $Sprite2D
+@onready var healthbar = $HealthBar
+@onready var timer_comp = $TimersComponent
+@onready var anim_comp = $EntityAnimationComponent
+@onready var move_comp = $EntityMovementComponent
+@onready var fsm = $FSM
+@onready var anim_player = $AnimationPlayer
+@onready var hurtbox = $EntityHurtbox
 
 # States
-@export var idle_state : EntityIdleState
-@export var walk_state : EntityWalkState
-@export var death_state : EntityDeathState
+@onready var idle_state = $FSM/EntityIdleState
+@onready var walk_state = $FSM/EntityWalkState
+@onready var death_state = $FSM/EntityDeathState
+
+var home_pos : Vector2
 
 func _ready():
 	move_comp.connect("switch_state", _switch_state)
+	home_pos = self.global_position
 
 func _change_state(next_state : State):
-	fsm.change_state(next_state)
+	if not fsm.current_state is EntityDeathState:
+		fsm.change_state(next_state)
 
 func _switch_state(current_state : State, next_state : State):
-	if fsm.current_state == current_state:
+	if fsm.current_state == current_state and not fsm.current_state is EntityDeathState:
 		fsm.change_state(next_state)
+
+func _set_health(health):
+	if health <= 0:
+		health = 0
+		_change_state(death_state)
+	else:
+		healthbar.health = health
 
 # utlity
 func get_dir_to(object) -> Vector2:

@@ -17,12 +17,13 @@ func _ready():
 	sprint_comp.connect("switch_state", _switch_state)
 	attack_comp.connect("change_state", _change_state)
 	hurtbox.connect("change_state", _change_state)
+	healthbar.init_health(stats.health)
+
+func _set_health(health):
+	super._set_health(health)
+	stats.health = health
 
 func _process(_delta):
-	# death condition
-	if stats.health <= 0:
-		_change_state(death_state)
-	
 	if  fsm.current_state is EntityAttackState or fsm.current_state is EntityDeathState:
 		return
 	
@@ -45,9 +46,7 @@ func _process(_delta):
 	
 	stats.direction = dir
 
-
 func move_towards(dir : Vector2 = stats.direction, speed : float = stats.current_speed):
-	anim_comp.play_anim("walk")
 	update_velocity(dir, speed)
 	move_and_slide()
 

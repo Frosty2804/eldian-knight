@@ -24,4 +24,5 @@ func _process(_delta):
 	# exit condition: player escapes
 	if not should_chase and fsm.current_state == chase_state:
 		switch_state.emit(chase_state, walk_state)
+		chase_state.target = null
 		target = null

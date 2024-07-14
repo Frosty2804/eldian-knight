@@ -11,6 +11,7 @@ var should_attack = false
 var current_attack_state : State
 var attack_index : int
 var target_pos : Vector2
+var attack_connected : bool = false
 
 signal change_state(next_state : State)
 
@@ -23,6 +24,11 @@ func _ready():
 	atk_cooldown_tmr = timer_comp.create_timer(true)
 	for attack_state in attack_states:
 		attack_state.connect("attack_over", _on_attack_over)
+		var hitbox = attack_state.get_child(0)
+		hitbox.connect("attack_connected", _on_attack_connected)
+
+func _on_attack_connected():
+	attack_connected = not owner is Player
 
 func _physics_process(_delta):
 	# Enter condition

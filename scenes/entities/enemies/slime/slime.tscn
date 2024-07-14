@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3 uid="uid://wgehhi1whphq"]
+[gd_scene load_steps=47 format=3 uid="uid://wgehhi1whphq"]
 
 [ext_resource type="Script" path="res://scripts/entities/enemies/slime/slime.gd" id="1_oawsl"]
 [ext_resource type="Texture2D" uid="uid://ba7pojxpscxss" path="res://art/1. mystic_woods/sprites/characters/slime.png" id="2_087sb"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_anim_component.gd" id="4_075kg"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_movement_component.gd" id="5_45t62"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_hurtbox_component.gd" id="5_ejdc6"]
+[ext_resource type="PackedScene" uid="uid://dtysoabuc2buy" path="res://scenes/ui/healthbar.tscn" id="5_sd3dd"]
 [ext_resource type="Script" path="res://scripts/entities/shared/states/entity_idle.gd" id="7_en2dl"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_hostile_component.gd" id="7_tevhg"]
 [ext_resource type="Script" path="res://scripts/entities/shared/states/entity_walk.gd" id="8_208w4"]
@@ -25,7 +26,7 @@
 [sub_resource type="Resource" id="Resource_cvov8"]
 resource_local_to_scene = true
 script = ExtResource("2_j2fay")
-health = 100.0
+health = 20.0
 min_speed = 25.0
 max_speed = 35.0
 acceleration = 100.0
@@ -333,7 +334,8 @@ _data = {
 "hit_flash": SubResource("Animation_6vho7")
 }
 
-[node name="Slime" type="CharacterBody2D" node_paths=PackedStringArray("detection_range", "hitflash_anim_player", "hostile_comp", "attack_comp", "movement_randomizer", "chase_comp", "hurtbox", "chase_state", "retreat_state", "hurt_state", "attack_states", "fsm", "sprite", "anim_player", "move_comp", "anim_comp", "timer_comp", "idle_state", "walk_state", "death_state") groups=["Enemies"]]
+[node name="Slime" type="CharacterBody2D" node_paths=PackedStringArray("detection_range", "hitflash_anim_player", "hostile_comp", "attack_comp", "movement_randomizer", "chase_comp", "nav_agent", "hurtbox", "chase_state", "retreat_state", "hurt_state", "attack_states") groups=["Enemies"]]
+z_index = 1
 y_sort_enabled = true
 collision_layer = 2
 collision_mask = 27
@@ -345,52 +347,59 @@ hostile_comp = NodePath("EntityHostileComponent")
 attack_comp = NodePath("EntityAttackComponent")
 movement_randomizer = NodePath("EntityMovementRandomizer")
 chase_comp = NodePath("EntityChaseComponent")
+nav_agent = NodePath("NavigationAgent2D")
 hurtbox = NodePath("EntityHurtbox")
 chase_state = NodePath("FSM/EntityChaseState")
 retreat_state = NodePath("FSM/EntityRetreatState")
 hurt_state = NodePath("FSM/EntityHurtState")
 attack_states = [NodePath("FSM/EnemyBasicAttackState")]
-fsm = NodePath("FSM")
-sprite = NodePath("Sprite2D")
-anim_player = NodePath("AnimationPlayer")
-move_comp = NodePath("EntityMovementComponent")
-anim_comp = NodePath("EntityAnimationComponent")
-timer_comp = NodePath("TimersComponent")
-idle_state = NodePath("FSM/EntityIdleState")
-walk_state = NodePath("FSM/EntityWalkState")
-death_state = NodePath("FSM/EntityDeathState")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 y_sort_enabled = true
 material = SubResource("ShaderMaterial_dxk16")
-position = Vector2(0, -6)
+position = Vector2(0, -7)
 texture = ExtResource("2_087sb")
 hframes = 7
 vframes = 13
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(0, -5)
 shape = SubResource("CircleShape2D_x5eym")
+metadata/_edit_lock_ = true
+
+[node name="Healthbar" parent="." instance=ExtResource("5_sd3dd")]
+offset_left = -7.0
+offset_top = 2.0
+offset_right = 7.0
 
 [node name="TimersComponent" type="Node" parent="."]
 script = ExtResource("2_due5q")
 
 [node name="EntityHurtbox" type="Area2D" parent="."]
+visible = false
 script = ExtResource("5_ejdc6")
 invincible_for = 0.05
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EntityHurtbox"]
 position = Vector2(0, -4)
 shape = SubResource("CircleShape2D_d4gbb")
 
 [node name="DetectionRange" type="Area2D" parent="."]
+visible = false
 collision_layer = 2
 metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionRange"]
 position = Vector2(0, -3)
 shape = SubResource("CircleShape2D_38tqc")
 metadata/_edit_lock_ = true
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+debug_enabled = true
 
 [node name="EntityAnimationComponent" type="Node" parent="."]
 script = ExtResource("4_075kg")
@@ -425,6 +434,7 @@ script = ExtResource("8_208w4")
 script = ExtResource("12_lapy2")
 
 [node name="EnemyBasicAttackState" type="Node2D" parent="FSM"]
+visible = false
 script = ExtResource("15_06ue5")
 
 [node name="Hitbox" type="Area2D" parent="FSM/EnemyBasicAttackState"]
