@@ -30,6 +30,12 @@ func play_anim(anim_state, play_hitflash = false):
 			sprite.flip_h = true
 			anim_player.play("side_" + anim_state)
 		"front":
-			anim_player.play("front_" + anim_state)
+			if anim_player.has_animation("front_" + anim_state):
+				anim_player.play("front_" + anim_state)
+			else:
+				anim_player.play("side_" + anim_state)
 		"back":
-			anim_player.play("back_" + anim_state)
+			if anim_player.has_animation("back_" + anim_state):
+				anim_player.play("back_" + anim_state)
+			else:
+				anim_player.play("side_" + anim_state)

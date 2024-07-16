@@ -2,7 +2,6 @@ class_name Player extends Entity
 @export var stats : PlayerStats
 
 # components
-@export var hitflash_anim_player : AnimationPlayer
 @export var sprint_comp : PlayerSprintComponent
 @export var attack_comp : EntityAttackComponent
 @export var hurtbox : EntityHurtbox
@@ -11,6 +10,18 @@ class_name Player extends Entity
 @export var sprint_state : PlayerSprintState
 @export var hurt_state : EntityHurtState
 @export var attack_states : Array[EntityAttackState]
+
+signal init_convo
+var in_convo_range = false
+var in_convo = false
+
+func get_up():
+	velocity = Vector2.ZERO
+	stats.facing_direction = "right"
+	anim_comp.anim_player.play_backwards("death")
+
+func player_init_state():
+	_change_state(idle_state)
 
 func _ready():
 	super._ready()
@@ -24,11 +35,18 @@ func _set_health(health):
 	stats.health = health
 
 func _process(_delta):
-	if  fsm.current_state is EntityAttackState or fsm.current_state is EntityDeathState:
+	if fsm.current_state is EntityAttackState or fsm.current_state is EntityDeathState:
+		return
+	
+	if in_convo and fsm.current_state != idle_state:
+		_change_state(idle_state)
 		return
 	
 	# handling input
-	if Input.is_action_just_pressed("primary_action") and attack_comp.atk_cooldown_tmr.is_stopped():
+	if Input.is_action_just_pressed("primary_action") and in_convo_range:
+		init_convo.emit()
+	
+	elif Input.is_action_just_pressed("primary_action") and attack_comp.atk_cooldown_tmr.is_stopped():
 		attack_comp.attack_index = 0    # basic attack
 		attack_comp.should_attack = attack_comp.attack_index > -1
 	

@@ -1,9 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://c57xqaofc4r8q"]
+[gd_scene load_steps=10 format=3 uid="uid://cj57mehbbh75a"]
 
 [ext_resource type="Script" path="res://scripts/entities/shared/entity.gd" id="1_0buw3"]
 [ext_resource type="Script" path="res://scripts/ui/healthbar/healthbar.gd" id="2_jpqu3"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/timers_component.gd" id="3_pe0ah"]
-[ext_resource type="Script" path="res://scripts/entities/shared/components/entity_hurtbox_component.gd" id="4_njdpb"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_anim_component.gd" id="5_s33g6"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_movement_component.gd" id="6_ajn7j"]
 [ext_resource type="Script" path="res://scripts/fsm/finite_state_machine.gd" id="7_tquuo"]
@@ -20,11 +19,6 @@ script = ExtResource("3_pe0ah")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-
-[node name="EntityHurtbox" type="Area2D" parent="."]
-script = ExtResource("4_njdpb")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="EntityHurtbox"]
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 offset_right = 4.0

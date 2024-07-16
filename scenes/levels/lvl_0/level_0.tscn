@@ -1,8 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://cwrujikhom51e"]
+[gd_scene load_steps=15 format=3 uid="uid://cwrujikhom51e"]
 
 [ext_resource type="PackedScene" uid="uid://cxayyjnrh8yjs" path="res://scenes/levels/lvl/level.tscn" id="1_7tr2u"]
 [ext_resource type="Script" path="res://scripts/entities/player/resources/player_stats.gd" id="2_8l0yy"]
 [ext_resource type="TileSet" uid="uid://t7gfxrijsld4" path="res://assets/tilesets/level_0/level_0.tres" id="2_20lfr"]
+[ext_resource type="Script" path="res://scripts/levels/level_0.gd" id="2_e6cg4"]
+[ext_resource type="PackedScene" uid="uid://dtgeox4h0gad6" path="res://scenes/entities/npcs/reaper/reaper.tscn" id="4_0o03a"]
+[ext_resource type="PackedScene" uid="uid://xc2hp2i1873j" path="res://scenes/entities/npcs/cow/cow.tscn" id="5_6wiuc"]
+[ext_resource type="Script" path="res://scripts/entities/npcs/shared/resources/npc_stats.gd" id="5_cvwd2"]
 
 [sub_resource type="Resource" id="Resource_ssv3g"]
 resource_local_to_scene = true
@@ -12,7 +16,83 @@ min_speed = 60.0
 max_speed = 100.0
 acceleration = 75.0
 
+[sub_resource type="Resource" id="Resource_yrp0e"]
+resource_local_to_scene = true
+script = ExtResource("5_cvwd2")
+health = 100.0
+min_speed = 25.0
+max_speed = 30.0
+acceleration = 25.0
+
+[sub_resource type="Resource" id="Resource_8fq13"]
+resource_local_to_scene = true
+script = ExtResource("5_cvwd2")
+health = 100.0
+min_speed = 25.0
+max_speed = 30.0
+acceleration = 25.0
+
+[sub_resource type="Resource" id="Resource_45qlu"]
+resource_local_to_scene = true
+script = ExtResource("5_cvwd2")
+health = 100.0
+min_speed = 25.0
+max_speed = 30.0
+acceleration = 25.0
+
+[sub_resource type="Resource" id="Resource_80d33"]
+resource_local_to_scene = true
+script = ExtResource("5_cvwd2")
+health = 25.0
+min_speed = 25.0
+max_speed = 30.0
+acceleration = 25.0
+
+[sub_resource type="Animation" id="Animation_bi0pv"]
+resource_name = "intro_anim"
+length = 20.0
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.8),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"_fade_from_black_to_normal"
+}, {
+"args": [],
+"method": &"player_intro"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Player")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1.2, 1.8),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"get_up"
+}, {
+"args": [],
+"method": &"player_init_state"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_iqudo"]
+_data = {
+"intro_anim": SubResource("Animation_bi0pv")
+}
+
 [node name="level0" instance=ExtResource("1_7tr2u")]
+script = ExtResource("2_e6cg4")
 
 [node name="TileMap" parent="." index="0"]
 position = Vector2(-1, 0)
@@ -23,13 +103,35 @@ layer_2/name = "cliffs"
 layer_2/tile_data = PackedInt32Array(-65509, 65537, 6, 27, 65538, 1, -65508, 65537, 6, 28, 65538, 1, 65564, 65538, 1, 131100, 65538, 2, -65507, 65538, 1, 29, 65538, 1, 65565, 1, 6, 131101, 65538, 2, -65506, 65538, 1, 30, 65538, 1, 65566, 65538, 1, 131102, 65538, 2, -65505, 65538, 1, 31, 65538, 1, 65567, 65538, 1, 131103, 65538, 2, -65504, 65538, 1, 32, 65538, 1, 65568, 196609, 5, -65503, 65538, 1, 33, 65538, 1, 65569, 65537, 5, 196641, 2, 1, -65502, 65538, 1, 34, 196609, 6, 65570, 327681, 6, 131106, 65538, 1, 196642, 65538, 1, -65501, 131073, 6, 35, 65538, 1, 65571, 65538, 1, 131107, 65538, 1, -65500, 65538, 1, 36, 65538, 1, 65572, 65538, 1, 131108, 65538, 1, 37, 65538, 1, 65573, 65538, 1, 131109, 262145, 5, 196645, 65538, 1, 262181, 65538, 1, 38, 131074, 1, 65574, 131074, 1, 131110, 131074, 1, 196646, 131074, 1, 262182, 131074, 1, 327717, 65538, 2, 327718, 131074, 2, -131045, 65538, 0, -131044, 65538, 0, -131043, 65538, 0, -131042, 65538, 0, -131041, 65538, 0, -131040, 65538, 0, -131039, 65538, 0, -131038, 65538, 0, -131037, 65538, 0, -131036, 65538, 0, 131104, 65538, 2, 131105, 393218, 1, 327715, 589826, 5, 393251, 589826, 6, 327716, 655362, 5, 393252, 655362, 6, 196643, 65538, 1, 262179, 65538, 1, 196644, 65538, 1, 262180, 65538, 1, 26, 65538, 1, 65561, 2, 2, 25, 2, 1, -65511, 2, 0, -65510, 524290, 2, -131046, 2, 0, 65562, 65538, 2, 65563, 393218, 1, 131099, 2, 2, -131035, 131074, 0, -65498, 131074, 0, -65499, 327682, 2, 262177, 2, 2, 262178, 393218, 1, 327714, 2, 2)
 
 [node name="Player" parent="." index="1"]
-position = Vector2(493, 4)
+position = Vector2(458, 4)
 stats = SubResource("Resource_ssv3g")
 
-[node name="RemoteTransform2D" parent="Player" index="12"]
-metadata/_edit_lock_ = true
-
 [node name="Camera2D" parent="." index="2"]
-position = Vector2(493, 4)
+position = Vector2(458, 4)
 offset = Vector2(0, -50)
-zoom = Vector2(3.5, 3.5)
+
+[node name="reaper" parent="." index="3" instance=ExtResource("4_0o03a")]
+position = Vector2(594, 10)
+stats = SubResource("Resource_yrp0e")
+
+[node name="Animals" type="Node2D" parent="." index="4"]
+
+[node name="Cow" parent="Animals" index="0" instance=ExtResource("5_6wiuc")]
+position = Vector2(396, 144)
+stats = SubResource("Resource_8fq13")
+
+[node name="Cow2" parent="Animals" index="1" instance=ExtResource("5_6wiuc")]
+position = Vector2(612, 149)
+stats = SubResource("Resource_45qlu")
+
+[node name="Cow3" parent="Animals" index="2" instance=ExtResource("5_6wiuc")]
+position = Vector2(494, 187)
+stats = SubResource("Resource_80d33")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="5"]
+libraries = {
+"": SubResource("AnimationLibrary_iqudo")
+}
+
+[node name="PhantomCamera2D" parent="." index="6"]
+position = Vector2(458, 4)

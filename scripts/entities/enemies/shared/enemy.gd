@@ -3,7 +3,6 @@ class_name Enemy extends Entity
 
 # components
 @export var detection_range : Area2D
-@export var hitflash_anim_player : AnimationPlayer
 @export var hostile_comp : EntityHostileComponent
 @export var attack_comp : EntityAttackComponent
 @export var movement_randomizer : EntityMovementRandomizer

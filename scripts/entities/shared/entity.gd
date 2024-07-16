@@ -1,19 +1,19 @@
 class_name Entity extends CharacterBody2D
 
 # Components
-@onready var sprite = $Sprite2D
-@onready var healthbar = $HealthBar
-@onready var timer_comp = $TimersComponent
-@onready var anim_comp = $EntityAnimationComponent
-@onready var move_comp = $EntityMovementComponent
-@onready var fsm = $FSM
-@onready var anim_player = $AnimationPlayer
-@onready var hurtbox = $EntityHurtbox
+@export var fsm : FSM
+@export var sprite : Sprite2D
+@export var healthbar : HealthBar
+@export var anim_player : AnimationPlayer
+@export var hitflash_anim_player : HitFlashAnimPlayer
+@export var move_comp : EntityMovementComponent
+@export var anim_comp : EntityAnimationComponent
+@export var timer_comp : TimersComponent
 
 # States
-@onready var idle_state = $FSM/EntityIdleState
-@onready var walk_state = $FSM/EntityWalkState
-@onready var death_state = $FSM/EntityDeathState
+@export var idle_state : EntityIdleState
+@export var walk_state : EntityWalkState
+@export var death_state : EntityDeathState
 
 var home_pos : Vector2
 

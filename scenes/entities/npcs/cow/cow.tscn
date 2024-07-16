@@ -1,0 +1,230 @@
+[gd_scene load_steps=28 format=3 uid="uid://xc2hp2i1873j"]
+
+[ext_resource type="Script" path="res://scripts/entities/npcs/cow/cow.gd" id="1_gs126"]
+[ext_resource type="Resource" uid="uid://cod71s68qtc1d" path="res://resources/entities/npcs/npc_stats.tres" id="2_4gesx"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/timers_component.gd" id="2_hhyks"]
+[ext_resource type="Texture2D" uid="uid://d66cl707mbks" path="res://art/0. Sprout Lands/Characters/Free Cow Sprites.png" id="3_spbmw"]
+[ext_resource type="Shader" uid="uid://dm1mrd5ixywnx" path="res://assets/shaders/shared/hit_flash.tres" id="3_yy3h2"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/entity_anim_component.gd" id="4_vwnsx"]
+[ext_resource type="Script" path="res://scripts/misc/hitflash/HitFlashAnimationPlayer.gd" id="5_dtf2x"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/entity_hurtbox_component.gd" id="6_k7fgf"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/entity_movement_randomizer.gd" id="6_mllsk"]
+[ext_resource type="Script" path="res://scripts/entities/shared/components/entity_movement_component.gd" id="7_4vtlx"]
+[ext_resource type="Script" path="res://scripts/fsm/finite_state_machine.gd" id="8_wmpkv"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/entity_idle.gd" id="9_s4qtg"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/entity_walk.gd" id="10_n702l"]
+[ext_resource type="PackedScene" uid="uid://dtysoabuc2buy" path="res://scenes/ui/healthbar.tscn" id="11_4xb0s"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/entity_death.gd" id="11_dtbg4"]
+[ext_resource type="Script" path="res://scripts/entities/shared/states/entity_hurt.gd" id="14_hr5on"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_21m88"]
+resource_local_to_scene = true
+shader = ExtResource("3_yy3h2")
+shader_parameter/enabled = false
+shader_parameter/tint = Color(1, 1, 1, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a13g6"]
+size = Vector2(24, 17)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hgybk"]
+size = Vector2(52, 30)
+
+[sub_resource type="Animation" id="Animation_68cbb"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_2rhvy"]
+resource_name = "side_hurt"
+length = 0.25
+step = 0.125
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.125),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 4]
+}
+
+[sub_resource type="Animation" id="Animation_y08e7"]
+resource_name = "side_idle"
+length = 2.8
+step = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 2.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 0, 0, 0, 0, 1, 2, 0, 0, 0, 1, 2, 0]
+}
+
+[sub_resource type="Animation" id="Animation_tlglg"]
+resource_name = "side_walk"
+length = 0.6
+step = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [3, 4]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4s2ws"]
+_data = {
+"RESET": SubResource("Animation_68cbb"),
+"side_hurt": SubResource("Animation_2rhvy"),
+"side_idle": SubResource("Animation_y08e7"),
+"side_walk": SubResource("Animation_tlglg")
+}
+
+[sub_resource type="Animation" id="Animation_38cqm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:material:shader_parameter/enabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_xglmi"]
+resource_name = "hit_flash"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:material:shader_parameter/enabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_107rn"]
+_data = {
+"RESET": SubResource("Animation_38cqm"),
+"hit_flash": SubResource("Animation_xglmi")
+}
+
+[node name="Cow" type="CharacterBody2D" node_paths=PackedStringArray("hurtbox", "hurt_state", "fsm", "sprite", "healthbar", "anim_player", "hitflash_anim_player", "move_comp", "anim_comp", "timer_comp", "idle_state", "walk_state", "death_state")]
+z_index = 1
+y_sort_enabled = true
+collision_layer = 32
+collision_mask = 27
+script = ExtResource("1_gs126")
+hurtbox = NodePath("EntityHurtbox")
+hurt_state = NodePath("FSM/EntityHurtState")
+stats = ExtResource("2_4gesx")
+fsm = NodePath("FSM")
+sprite = NodePath("Sprite2D")
+healthbar = NodePath("Healthbar")
+anim_player = NodePath("AnimationPlayer")
+hitflash_anim_player = NodePath("HitFlashAnimPlayer")
+move_comp = NodePath("EntityMovementComponent")
+anim_comp = NodePath("EntityAnimationComponent")
+timer_comp = NodePath("TimersComponent")
+idle_state = NodePath("FSM/EntityIdleState")
+walk_state = NodePath("FSM/EntityWalkState")
+death_state = NodePath("FSM/EntityDeathState")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+y_sort_enabled = true
+material = SubResource("ShaderMaterial_21m88")
+position = Vector2(0, -13)
+texture = ExtResource("3_spbmw")
+hframes = 3
+vframes = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -8.5)
+shape = SubResource("RectangleShape2D_a13g6")
+
+[node name="Healthbar" parent="." instance=ExtResource("11_4xb0s")]
+offset_left = -12.0
+offset_top = 2.0
+offset_right = 9.0
+offset_bottom = 5.0
+
+[node name="TimersComponent" type="Node" parent="."]
+script = ExtResource("2_hhyks")
+
+[node name="EntityHurtbox" type="Area2D" parent="."]
+collision_layer = 4
+script = ExtResource("6_k7fgf")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EntityHurtbox"]
+position = Vector2(2, -9)
+shape = SubResource("RectangleShape2D_hgybk")
+
+[node name="EntityAnimationComponent" type="Node" parent="."]
+script = ExtResource("4_vwnsx")
+
+[node name="EntityMovementRandomizer" type="Node" parent="."]
+script = ExtResource("6_mllsk")
+walk_for_time = 1.5
+idle_for_time = 3.0
+mode = "basic"
+
+[node name="EntityMovementComponent" type="Node" parent="."]
+script = ExtResource("7_4vtlx")
+
+[node name="FSM" type="Node2D" parent="."]
+script = ExtResource("8_wmpkv")
+
+[node name="EntityIdleState" type="Node2D" parent="FSM"]
+script = ExtResource("9_s4qtg")
+
+[node name="EntityWalkState" type="Node2D" parent="FSM"]
+position = Vector2(0, -9)
+script = ExtResource("10_n702l")
+
+[node name="EntityHurtState" type="Node2D" parent="FSM"]
+script = ExtResource("14_hr5on")
+
+[node name="EntityDeathState" type="Node2D" parent="FSM"]
+script = ExtResource("11_dtbg4")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_4s2ws")
+}
+
+[node name="HitFlashAnimPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_107rn")
+}
+script = ExtResource("5_dtf2x")
