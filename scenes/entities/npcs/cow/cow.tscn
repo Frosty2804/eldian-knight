@@ -24,7 +24,7 @@ shader_parameter/enabled = false
 shader_parameter/tint = Color(1, 1, 1, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a13g6"]
-size = Vector2(24, 17)
+size = Vector2(15.25, 5.5625)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hgybk"]
 size = Vector2(52, 30)
@@ -141,10 +141,8 @@ _data = {
 }
 
 [node name="Cow" type="CharacterBody2D" node_paths=PackedStringArray("hurtbox", "hurt_state", "fsm", "sprite", "healthbar", "anim_player", "hitflash_anim_player", "move_comp", "anim_comp", "timer_comp", "idle_state", "walk_state", "death_state")]
-z_index = 1
-y_sort_enabled = true
-collision_layer = 32
-collision_mask = 27
+collision_layer = 4
+collision_mask = 31
 script = ExtResource("1_gs126")
 hurtbox = NodePath("EntityHurtbox")
 hurt_state = NodePath("FSM/EntityHurtState")
@@ -162,28 +160,30 @@ walk_state = NodePath("FSM/EntityWalkState")
 death_state = NodePath("FSM/EntityDeathState")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-y_sort_enabled = true
 material = SubResource("ShaderMaterial_21m88")
-position = Vector2(0, -13)
+position = Vector2(-2, -13)
 texture = ExtResource("3_spbmw")
 hframes = 3
 vframes = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -8.5)
+y_sort_enabled = true
+position = Vector2(-3, -3)
 shape = SubResource("RectangleShape2D_a13g6")
 
 [node name="Healthbar" parent="." instance=ExtResource("11_4xb0s")]
-offset_left = -12.0
-offset_top = 2.0
-offset_right = 9.0
-offset_bottom = 5.0
+offset_left = -11.0
+offset_top = 3.0
+offset_right = 10.0
+offset_bottom = 6.0
 
 [node name="TimersComponent" type="Node" parent="."]
 script = ExtResource("2_hhyks")
 
 [node name="EntityHurtbox" type="Area2D" parent="."]
-collision_layer = 4
+visible = false
+collision_layer = 0
+collision_mask = 3
 script = ExtResource("6_k7fgf")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EntityHurtbox"]

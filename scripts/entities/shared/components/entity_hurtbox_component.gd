@@ -50,6 +50,7 @@ func _on_area_entered(area):
 
 func take_damage():
 	owner._set_health(stats.health - accumulated_dmg)
+	hurt_state.play_hitflash = true
 	hurt_state.knockback = knockback / enemy_count
 	change_state.emit(hurt_state)
 	accumulated_dmg = 0

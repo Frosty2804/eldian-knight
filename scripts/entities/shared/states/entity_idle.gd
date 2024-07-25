@@ -12,6 +12,7 @@ func _ready():
 	set_process(false)
 
 func _enter_state():
+	stats.direction = Vector2.ZERO
 	stats.current_speed = 0
 	set_process(true)
 

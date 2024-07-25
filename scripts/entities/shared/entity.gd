@@ -16,10 +16,12 @@ class_name Entity extends CharacterBody2D
 @export var death_state : EntityDeathState
 
 var home_pos : Vector2
+var near_level_boundary : bool = false
 
 func _ready():
 	move_comp.connect("switch_state", _switch_state)
 	home_pos = self.global_position
+	
 
 func _change_state(next_state : State):
 	if not fsm.current_state is EntityDeathState:

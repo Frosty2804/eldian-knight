@@ -395,9 +395,8 @@ script = ExtResource("5_45t62")
 [node name="EntityChaseComponent" type="Node" parent="."]
 script = ExtResource("8_hx8fg")
 
-[node name="FSM" type="Node2D" parent="." node_paths=PackedStringArray("current_state")]
+[node name="FSM" type="Node2D" parent="."]
 script = ExtResource("2_k38dw")
-current_state = NodePath("EntityIdleState")
 
 [node name="EntityIdleState" type="Node2D" parent="FSM"]
 script = ExtResource("7_en2dl")

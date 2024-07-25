@@ -4,6 +4,7 @@ var stats : EntityStats
 var sprite : Sprite2D
 var anim_player : AnimationPlayer
 var hitflash_anim_player : AnimationPlayer
+var anim_state : String
 
 func _ready():
 	stats = owner.stats
@@ -11,7 +12,8 @@ func _ready():
 	anim_player = owner.anim_player
 	hitflash_anim_player = owner.hitflash_anim_player
 
-func play_anim(anim_state, play_hitflash = false):
+func play_anim(anim_to_play, play_hitflash = false):
+	anim_state = anim_to_play
 	if anim_state == "none":
 		return
 	

@@ -2,6 +2,8 @@ class_name Reaper extends NPC
 
 @export var wield_holster_weapon_state : ReaperWeaponWieldHolsterState
 @export var interaction_comp : NPCInteractionComponent
+@onready var collision_body = $CollisionShape2D
+
 var weapon_in_hand = false
 
 func _ready():
