@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://bvdtyxwahnqju"]
+
+[ext_resource type="Script" path="res://scripts/levels/level_boundary.gd" id="1_xtagk"]
+
+[node name="LevelBoundary" type="Node2D"]
+script = ExtResource("1_xtagk")
+
+[node name="BoundaryCollision" type="StaticBody2D" parent="."]
+collision_layer = 16
+collision_mask = 7
+
+[node name="CollisionPolygon" type="CollisionPolygon2D" parent="BoundaryCollision"]
+
+[node name="CollisionPeriphery" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 7
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="CollisionPeriphery"]

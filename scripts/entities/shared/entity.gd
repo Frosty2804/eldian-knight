@@ -3,7 +3,9 @@ class_name Entity extends CharacterBody2D
 # Components
 @export var fsm : FSM
 @export var sprite : Sprite2D
+@export var healthbar : HealthBar
 @export var anim_player : AnimationPlayer
+@export var hitflash_anim_player : HitFlashAnimPlayer
 @export var move_comp : EntityMovementComponent
 @export var anim_comp : EntityAnimationComponent
 @export var timer_comp : TimersComponent
@@ -13,15 +15,28 @@ class_name Entity extends CharacterBody2D
 @export var walk_state : EntityWalkState
 @export var death_state : EntityDeathState
 
+var home_pos : Vector2
+var near_level_boundary : bool = false
+
 func _ready():
 	move_comp.connect("switch_state", _switch_state)
+	home_pos = self.global_position
+	
 
 func _change_state(next_state : State):
-	fsm.change_state(next_state)
+	if not fsm.current_state is EntityDeathState:
+		fsm.change_state(next_state)
 
 func _switch_state(current_state : State, next_state : State):
-	if fsm.current_state == current_state:
+	if fsm.current_state == current_state and not fsm.current_state is EntityDeathState:
 		fsm.change_state(next_state)
+
+func _set_health(health):
+	if health <= 0:
+		health = 0
+		_change_state(death_state)
+	else:
+		healthbar.health = health
 
 # utlity
 func get_dir_to(object) -> Vector2:

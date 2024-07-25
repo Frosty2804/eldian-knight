@@ -1,13 +1,12 @@
 class_name EntityHostileComponent extends Node
 
-@export var long_attack_range : float = 40
+@export var long_attack_range : float = 50
 var fsm : FSM
 var detection_range : Area2D
 var chase_comp : EntityChaseComponent
 var attack_comp : EntityAttackComponent
 var retreat_state : EntityRetreatState
-var player_pos : Vector2
-const retreat_distance = 15
+const retreat_distance = 20
 
 signal switch_state(current_state : State, next_state : State)
 signal change_state(next_state : State)
@@ -34,14 +33,16 @@ func _on_retreat_over():
 	switch_state.emit(retreat_state, chase_comp.idle_state)
 
 func _process(_delta):
-	if not chase_comp.should_chase or fsm.current_state is EntityAttackState or fsm.current_state is EntityHurtState: 
+	if not chase_comp.should_chase or fsm.current_state is EntityDeathState or fsm.current_state is EntityHurtState or fsm.current_state is EntityAttackState: 
 		return
 	
-	player_pos = chase_comp.target.global_position
-	if owner.get_dist_to(player_pos) < long_attack_range and attack_comp.atk_cooldown_tmr.is_stopped():
+	var target_pos = chase_comp.target.global_position
+	var dist_to_target = owner.get_dist_to(target_pos)
+	if attack_comp.atk_cooldown_tmr.is_stopped() and dist_to_target <= long_attack_range:
 		attack_comp.attack_index = 0   
-		attack_comp.target_pos = player_pos
+		attack_comp.target_pos = target_pos
 		attack_comp.should_attack = true
-	elif owner.get_dist_to(player_pos) < retreat_distance and not attack_comp.atk_cooldown_tmr.is_stopped():
+	elif not attack_comp.atk_cooldown_tmr.is_stopped() and dist_to_target <= retreat_distance and attack_comp.attack_connected:
+		attack_comp.attack_connected = false
 		retreat_state.target = chase_comp.target
 		change_state.emit(retreat_state)

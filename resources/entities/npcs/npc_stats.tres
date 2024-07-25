@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="NPCStats" load_steps=2 format=3 uid="uid://cod71s68qtc1d"]
+
+[ext_resource type="Script" path="res://scripts/entities/npcs/shared/resources/npc_stats.gd" id="1_hpju3"]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource("1_hpju3")
+health = 25.0
+min_speed = 25.0
+max_speed = 30.0
+acceleration = 25.0

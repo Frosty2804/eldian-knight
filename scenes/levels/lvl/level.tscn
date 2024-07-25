@@ -1,0 +1,82 @@
+[gd_scene load_steps=12 format=3 uid="uid://cxayyjnrh8yjs"]
+
+[ext_resource type="PackedScene" uid="uid://cwsbvhhhmfgka" path="res://scenes/entities/player/player.tscn" id="1_thqow"]
+[ext_resource type="Script" path="res://scripts/levels/level.gd" id="1_wpr04"]
+[ext_resource type="Script" path="res://scripts/entities/player/resources/player_stats.gd" id="2_y8e0q"]
+[ext_resource type="Script" path="res://scripts/misc/smoother/smoother.gd" id="3_68go5"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="4_b0pfw"]
+[ext_resource type="Script" path="res://scripts/misc/camera/cam_manager.gd" id="5_phlm2"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="6_o50yd"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="7_0bkn7"]
+
+[sub_resource type="Resource" id="Resource_1inu4"]
+resource_local_to_scene = true
+script = ExtResource("2_y8e0q")
+health = 100.0
+min_speed = 60.0
+max_speed = 100.0
+acceleration = 75.0
+
+[sub_resource type="Resource" id="Resource_qwfwr"]
+script = ExtResource("7_0bkn7")
+duration = 1.0
+transition = 0
+ease = 2
+
+[sub_resource type="Resource" id="Resource_rh1bv"]
+script = ExtResource("7_0bkn7")
+duration = 0.4
+transition = 0
+ease = 3
+
+[node name="level" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_wpr04")
+
+[node name="TileMap" type="TileMap" parent="."]
+y_sort_enabled = true
+format = 2
+layer_0/name = "ysorted"
+layer_0/y_sort_enabled = true
+layer_0/z_index = 1
+
+[node name="Player" parent="." node_paths=PackedStringArray("player_cam", "inventory_cam") instance=ExtResource("1_thqow")]
+stats = SubResource("Resource_1inu4")
+player_cam = NodePath("../PlayerCam")
+inventory_cam = NodePath("../PlayerInventoryCam")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, 1.4013e-45)
+zoom = Vector2(5, 5)
+
+[node name="PhantomCameraHost" type="Node" parent="Camera2D"]
+script = ExtResource("4_b0pfw")
+
+[node name="CamManager" type="Node" parent="."]
+script = ExtResource("5_phlm2")
+
+[node name="PlayerCam" type="Node2D" parent="." node_paths=PackedStringArray("follow_target")]
+position = Vector2(0, 1.4013e-45)
+script = ExtResource("6_o50yd")
+priority = 1
+follow_mode = 1
+follow_target = NodePath("../Player")
+zoom = Vector2(5, 5)
+tween_resource = SubResource("Resource_qwfwr")
+tween_on_load = false
+follow_damping = true
+follow_damping_value = Vector2(0.4, 0.4)
+
+[node name="PlayerInventoryCam" type="Node2D" parent="." node_paths=PackedStringArray("follow_target")]
+position = Vector2(-80, 1.4013e-45)
+script = ExtResource("6_o50yd")
+follow_mode = 2
+follow_target = NodePath("../Player")
+zoom = Vector2(9, 9)
+tween_resource = SubResource("Resource_rh1bv")
+follow_offset = Vector2(-80, 0)
+follow_damping = true
+follow_damping_value = Vector2(0.4, 0.4)
+
+[node name="Smoother" type="Node" parent="."]
+script = ExtResource("3_68go5")

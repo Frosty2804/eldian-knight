@@ -2,6 +2,7 @@ class_name EntityMovementRandomizer extends Node
 
 @export var walk_for_time: float = 2.0
 @export var idle_for_time: float = 1.0
+@export var mode = "advanced"
 var stats : EntityStats
 var timer_comp : TimersComponent
 var wander_timer : Timer
@@ -16,7 +17,9 @@ func _ready():
 func _process(_delta):
 	if wander_timer.is_stopped() and idle_timer.is_stopped():
 		if randi() % 2 == 0:
-			stats.direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
+			match mode:
+				"basic": stats.direction = Vector2(-1 if (randi() % 100 < 5 or stats.facing_direction == "left") else 1, 0)
+				"advanced": stats.direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
 			wander_timer.start(walk_for_time)
 		else:
 			stats.direction = Vector2.ZERO

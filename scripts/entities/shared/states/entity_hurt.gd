@@ -2,9 +2,11 @@ class_name EntityHurtState extends State
 
 var anim_comp : EntityAnimationComponent
 var timer_comp : TimersComponent
-var knockback : Vector2 = Vector2.ZERO
 var animation_timer : Timer
 const animation_duration = 0.25
+# has to be set by other components
+var knockback : Vector2 = Vector2.ZERO
+var play_hitflash : bool = false
 
 signal state_over()
 
@@ -15,7 +17,7 @@ func _ready():
 	set_physics_process(false)
 
 func _enter_state():
-	anim_comp.play_anim("hurt", true)
+	anim_comp.play_anim("hurt", play_hitflash)
 	animation_timer.start(animation_duration)
 	set_physics_process(true)
 	

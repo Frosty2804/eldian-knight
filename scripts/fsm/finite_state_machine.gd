@@ -1,9 +1,9 @@
 class_name FSM extends Node2D
 
-@export var current_state: State
+var current_state: State = null
 
-func _ready():
-	change_state(current_state)
+#func _ready():
+	#change_state(current_state)
 
 func change_state(new_state: State):
 	if current_state is State:
