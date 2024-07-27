@@ -8,7 +8,8 @@ signal zoom_out_from_inventory(inventory_cam : PhantomCamera2D, player_cam : Pha
 @export var sprint_comp : PlayerSprintComponent
 @export var attack_comp : EntityAttackComponent
 @export var hurtbox : EntityHurtbox
-@export var inventory : Inventory
+@export var inventory_gui : InventoryGUI
+@export var inventory_res : Inventory
 
 # states
 @export var sprint_state : PlayerSprintState
@@ -75,11 +76,11 @@ func _process(_delta):
 		attack_comp.should_attack = attack_comp.attack_index > -1
 		return
 	
-	if Input.is_action_just_pressed("toggle_inventory") and inventory.is_open == false:
-		inventory.open_inventory()
+	if Input.is_action_just_pressed("toggle_inventory") and inventory_gui.is_open == false:
+		inventory_gui.open_inventory()
 		zoom_into_inventory.emit(player_cam, inventory_cam)
-	elif Input.is_action_just_pressed("toggle_inventory") and inventory.is_open == true:
-		inventory.close_inventory()
+	elif Input.is_action_just_pressed("toggle_inventory") and inventory_gui.is_open == true:
+		inventory_gui.close_inventory()
 		zoom_out_from_inventory.emit(inventory_cam, player_cam)
 	
 	var dir = Vector2.ZERO

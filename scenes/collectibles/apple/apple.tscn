@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://7f1kyvpxr3f"]
+
+[ext_resource type="PackedScene" uid="uid://b8vhsikw817pe" path="res://scenes/collectibles/shared/collectible.tscn" id="1_tugfq"]
+[ext_resource type="Texture2D" uid="uid://c3cap56uge5uo" path="res://art/0. Sprout Lands/Objects/Basic_Grass_Biom_things.png" id="2_ty5dj"]
+[ext_resource type="Resource" uid="uid://bi23sn64wgcmx" path="res://resources/collectibles/apple.tres" id="2_xf1r5"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ylw7q"]
+radius = 6.0
+
+[node name="Apple" instance=ExtResource("1_tugfq")]
+collectible_res = ExtResource("2_xf1r5")
+
+[node name="Sprite2D" parent="." index="0"]
+texture = ExtResource("2_ty5dj")
+hframes = 9
+vframes = 5
+frame = 19
+
+[node name="CollisionShape2D" parent="Area2D" index="0"]
+shape = SubResource("CircleShape2D_ylw7q")

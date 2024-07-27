@@ -18,4 +18,9 @@ func fade_to_color(duration : float, color : Color = BLACK, fade_to_normal = fal
 func fade_to_normal_from_color(duration : float, color : Color = BLACK):
 	color_rect.color = color
 	var tween = create_tween()
-	tween.tween_property(color_rect, "modulate:a", 0, duration).from(1)
+	tween.tween_property(color_rect, "modulate:a", 0, duration)
+
+func inventory_fade():
+	color_rect.color = BLACK
+	var tween = create_tween()
+	tween.tween_property(color_rect, "modulate:a", 0.5, 0.5).from(0)

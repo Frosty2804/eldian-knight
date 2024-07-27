@@ -26,7 +26,7 @@ func _fade_from_black_to_normal():
 func player_intro():
 	Globals.run_dialogue("player_intro_cutscene_dialogue")
 
-func _process(delta):
+func _process(_delta):
 	if reaper_appeared and (player.global_position - reaper.global_position).length() < 15:
 		var tween = create_tween()
 		reaper.collision_body.disabled = true

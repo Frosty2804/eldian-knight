@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=17 format=3 uid="uid://b0ydcvvbkpefn"]
+[gd_resource type="TileSet" load_steps=19 format=3 uid="uid://b0ydcvvbkpefn"]
 
 [ext_resource type="Texture2D" uid="uid://ccx5734bfe4jv" path="res://art/0. Sprout Lands/Tilesets/Fences.png" id="1_22kte"]
 [ext_resource type="Texture2D" uid="uid://reuent3y6won" path="res://art/0. Sprout Lands/Tilesets/Grass.png" id="2_peffc"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://c4oo4qxwhxlgt" path="res://art/0. Sprout Lands/Tilesets/Water.png" id="5_t6wfu"]
 [ext_resource type="Texture2D" uid="uid://c5mfxmt8xsnxp" path="res://art/0. Sprout Lands/Tilesets/Wooden House.png" id="6_jn0xb"]
 [ext_resource type="Texture2D" uid="uid://c3cap56uge5uo" path="res://art/0. Sprout Lands/Objects/Basic_Grass_Biom_things.png" id="7_6kh4m"]
+[ext_resource type="PackedScene" uid="uid://7f1kyvpxr3f" path="res://scenes/collectibles/apple/apple.tscn" id="7_742bj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ngpxo"]
 texture = ExtResource("1_22kte")
@@ -824,6 +825,10 @@ texture = ExtResource("6_jn0xb")
 6:4/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 6:4/0/physics_layer_0/angular_velocity = 0.0
 
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_petp4"]
+resource_name = "Collectibles"
+scenes/1/scene = ExtResource("7_742bj")
+
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gkj0y"]
 texture = ExtResource("5_t6wfu")
 0:0/animation_columns = 4
@@ -991,3 +996,4 @@ sources/5 = SubResource("TileSetAtlasSource_mnghs")
 sources/8 = SubResource("TileSetAtlasSource_gkj0y")
 sources/9 = SubResource("TileSetAtlasSource_qbo4l")
 sources/4 = SubResource("TileSetAtlasSource_2twqg")
+sources/6 = SubResource("TileSetScenesCollectionSource_petp4")

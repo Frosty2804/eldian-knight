@@ -1,9 +1,10 @@
-[gd_scene load_steps=47 format=3 uid="uid://cwsbvhhhmfgka"]
+[gd_scene load_steps=48 format=3 uid="uid://cwsbvhhhmfgka"]
 
 [ext_resource type="Script" path="res://scripts/entities/player/player.gd" id="1_jt8wm"]
 [ext_resource type="Shader" uid="uid://dm1mrd5ixywnx" path="res://assets/shaders/shared/hit_flash.tres" id="2_buj7m"]
 [ext_resource type="Texture2D" uid="uid://c3rdyodlrpwho" path="res://art/1. mystic_woods/sprites/characters/player.png" id="2_fwo3g"]
 [ext_resource type="Script" path="res://scripts/entities/player/resources/player_stats.gd" id="2_pkfog"]
+[ext_resource type="Resource" uid="uid://dxl7mos3yevw1" path="res://resources/ui/inventory/inventory.tres" id="3_bl0hp"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_movement_component.gd" id="3_riwmd"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_anim_component.gd" id="4_3guep"]
 [ext_resource type="Script" path="res://scripts/entities/shared/components/entity_attack_component.gd" id="5_c73gb"]
@@ -340,14 +341,15 @@ _data = {
 "hit_flash": SubResource("Animation_xglmi")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("sprint_comp", "attack_comp", "hurtbox", "inventory", "sprint_state", "hurt_state", "attack_states", "fsm", "sprite", "healthbar", "anim_player", "hitflash_anim_player", "move_comp", "anim_comp", "timer_comp", "idle_state", "walk_state", "death_state") groups=["Player"]]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("sprint_comp", "attack_comp", "hurtbox", "inventory_gui", "sprint_state", "hurt_state", "attack_states", "fsm", "sprite", "healthbar", "anim_player", "hitflash_anim_player", "move_comp", "anim_comp", "timer_comp", "idle_state", "walk_state", "death_state") groups=["Player"]]
 collision_mask = 62
 script = ExtResource("1_jt8wm")
 stats = SubResource("Resource_16vn6")
 sprint_comp = NodePath("PlayerSprintComponent")
 attack_comp = NodePath("EntityAttackComponent")
 hurtbox = NodePath("EntityHurtbox")
-inventory = NodePath("CanvasLayer/InventoryGUI")
+inventory_gui = NodePath("CanvasLayer/InventoryGUI")
+inventory_res = ExtResource("3_bl0hp")
 sprint_state = NodePath("FSM/PlayerSprintState")
 hurt_state = NodePath("FSM/EntityHurtState")
 attack_states = [NodePath("FSM/PlayerBasicAttackState")]
